@@ -2,6 +2,7 @@ package net.ayronix.luckyblocks;
 
 import net.ayronix.luckyblocks.events.*;
 import org.bukkit.NamespacedKey;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -63,12 +64,14 @@ public final class LuckyBlockPlugin extends JavaPlugin
 
         getServer().getPluginManager().registerEvents(new BlockPlaceListener(this), this);
         getServer().getPluginManager().registerEvents(new BlockBreakListener(this), this);
-        getServer().getPluginManager().registerEvents(new ExplosionListener(), this);
-
-        if (getCommand("luckyblock") != null)
+        getServer().getPluginManager().registerEvents(new ExplosionListener(this), this);
+        getServer().getPluginManager().registerEvents(new BlockProtectionListener(this), this); // Регистрируем
+                                                                                                // новый
+                                                                                                // слушатель
+        PluginCommand cmd = getCommand("luckyblock");
+        if (cmd != null)
         {
-            getCommand("luckyblock").setExecutor(new LuckyBlockCommand(this));
-
+            cmd.setExecutor(new LuckyBlockCommand(this));
         } else
         {
             getLogger().severe("Команда 'luckyblock' не найдена!");

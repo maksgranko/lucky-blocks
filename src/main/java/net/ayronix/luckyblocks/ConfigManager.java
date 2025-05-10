@@ -68,7 +68,10 @@ public class ConfigManager
         String materialName = config.getString("types." + type + ".item.material", "SPONGE");
         try
         {
-            return Material.valueOf(materialName.toUpperCase());
+            if (materialName != null)
+                return Material.valueOf(materialName.toUpperCase());
+            else
+                return Material.SPONGE;
         } catch (IllegalArgumentException e)
         {
             plugin.getLogger()

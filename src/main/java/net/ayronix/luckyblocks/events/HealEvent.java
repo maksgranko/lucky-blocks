@@ -1,8 +1,10 @@
 package net.ayronix.luckyblocks.events;
 
 import net.ayronix.luckyblocks.LuckyBlockPlugin;
+
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
@@ -18,10 +20,10 @@ public class HealEvent implements ICustomEvent
         // player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
         // player.setHealth(Math.min(player.getHealth() + healAmount,
         // player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
-
-        if (player.getAttribute(Attribute.GENERIC_MAX_HEALTH) != null)
+        AttributeInstance max_health = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+        if (max_health != null)
         {
-            player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+            player.setHealth(max_health.getValue());
         }
         player.sendMessage("§cВы исцелены!");
     }
