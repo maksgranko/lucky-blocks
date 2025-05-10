@@ -1,0 +1,304 @@
+types:
+  positive:
+    item:
+      material: SPONGE
+      custom-model-data: 1001
+    levels:
+      1:
+        display-name: "&aПоложительный ЛакиБлок &eI уровня"
+        events:
+          EXPLOSION:
+            enabled: false
+            weight: 100
+          DROP_FOOD:
+            enabled: true
+            weight: 900
+      2:
+        display-name: "&aПоложительный ЛакиБлок &eII уровня"
+        events:
+          EXPLOSION:
+            enabled: true
+            weight: 200
+          DROP_FOOD:
+            enabled: true
+            weight: 800
+      3:
+        display-name: "&aПоложительный ЛакиБлок &eIII уровня"
+        events:
+          EXPLOSION:
+            enabled: true
+            weight: 500
+          DROP_FOOD:
+            enabled: true
+            weight: 500
+      4:
+        display-name: "&aПоложительный ЛакиБлок &eIV уровня"
+        events:
+          EXPLOSION:
+            enabled: true
+            weight: 400
+          DROP_FOOD:
+            enabled: true
+            weight: 600
+      5:
+        display-name: "&aПоложительный ЛакиБлок &eV уровня"
+        events:
+          EXPLOSION:
+            enabled: true
+            weight: 300
+          DROP_FOOD:
+            enabled: true
+            weight: 700
+  negative:
+    item:
+      material: COAL_BLOCK
+      custom-model-data: 1002
+    levels:
+      1:
+        display-name: "&cНегативный ЛакиБлок &eI уровня"
+        events:
+          EXPLOSION:
+            enabled: true
+            weight: 800
+          DROP_FOOD: # Пример негативного дропа еды (можно сделать кастомное событие "POISON_FOOD")
+            enabled: true
+            weight: 200
+            # Тут можно было бы добавить параметры для события, например:
+            # item: ROTTEN_FLESH
+            # amount: 3
+      2:
+        display-name: "&cНегативный ЛакиБлок &eII уровня"
+        events:
+          EXPLOSION:
+            enabled: true
+            weight: 900
+          DROP_FOOD:
+            enabled: false # Отключено, так как нет смысла в "негативной еде" без доп. логики
+            weight: 100
+      3:
+        display-name: "&cНегативный ЛакиБлок &eIII уровня"
+        events:
+          EXPLOSION:
+            enabled: true
+            weight: 1000
+          DROP_FOOD:
+            enabled: false
+            weight: 0
+      4:
+        display-name: "&cНегативный ЛакиБлок &eIV уровня"
+        events:
+          EXPLOSION:
+            enabled: true
+            weight: 1100
+          DROP_FOOD:
+            enabled: false
+            weight: 0
+      5:
+        display-name: "&cНегативный ЛакиБлок &eV уровня"
+        events:
+          EXPLOSION:
+            enabled: true
+            weight: 1200
+          DROP_FOOD:
+            enabled: false
+            weight: 0
+  neutral:
+    item:
+      material: IRON_BLOCK
+      custom-model-data: 1003
+    levels:
+      1:
+        display-name: "&7Нейтральный ЛакиБлок &eI уровня"
+        events:
+          EXPLOSION:
+            enabled: true
+            weight: 500
+          DROP_FOOD:
+            enabled: true
+            weight: 500
+      2:
+        display-name: "&7Нейтральный ЛакиБлок &eII уровня"
+        events:
+          EXPLOSION:
+            enabled: true
+            weight: 400
+          DROP_FOOD:
+            enabled: true
+            weight: 600
+      3:
+        display-name: "&7Нейтральный ЛакиБлок &eIII уровня"
+        events:
+          EXPLOSION:
+            enabled: true
+            weight: 300
+          DROP_FOOD:
+            enabled: true
+            weight: 700
+      4:
+        display-name: "&7Нейтральный ЛакиБлок &eIV уровня"
+        events:
+          EXPLOSION:
+            enabled: true
+            weight: 200
+          DROP_FOOD:
+            enabled: true
+            weight: 800
+      5:
+        display-name: "&7Нейтральный ЛакиБлок &eV уровня"
+        events:
+          EXPLOSION:
+            enabled: true
+            weight: 100
+          DROP_FOOD:
+            enabled: true
+            weight: 900
+  diamond:
+    item:
+      material: DIAMOND_BLOCK
+      custom-model-data: 1004
+    levels:
+      1:
+        display-name: "&bАлмазный ЛакиБлок &eI уровня"
+        events:
+          PORTAL:
+            enabled: true
+            weight: 1000
+      2:
+        display-name: "&bАлмазный ЛакиБлок &eII уровня"
+        events:
+          PORTAL:
+            enabled: true
+            weight: 1100
+      3:
+        display-name: "&bАлмазный ЛакиБлок &eIII уровня"
+        events:
+          PORTAL:
+            enabled: true
+            weight: 1200
+      4:
+        display-name: "&bАлмазный ЛакиБлок &eIV уровня"
+        events:
+          PORTAL:
+            enabled: true
+            weight: 1300
+      5:
+        display-name: "&bАлмазный ЛакиБлок &eV уровня"
+        events:
+          PORTAL:
+            enabled: true
+            weight: 1400
+  food:
+    item:
+      material: HAY_BLOCK # Стог сена как блок еды
+      custom-model-data: 1005
+    levels:
+      1:
+        display-name: "&6Еда ЛакиБлок &eI уровня"
+        events:
+          DROP_FOOD:
+            enabled: true
+            weight: 1000
+            # item: COOKED_BEEF # Пример как можно будет расширить
+            # amount: 5
+      2:
+        display-name: "&6Еда ЛакиБлок &eII уровня"
+        events:
+          DROP_FOOD:
+            enabled: true
+            weight: 1100
+      3:
+        display-name: "&6Еда ЛакиБлок &eIII уровня"
+        events:
+          DROP_FOOD:
+            enabled: true
+            weight: 1200
+      4:
+        display-name: "&6Еда ЛакиБлок &eIV уровня"
+        events:
+          DROP_FOOD:
+            enabled: true
+            weight: 1300
+      5:
+        display-name: "&6Еда ЛакиБлок &eV уровня"
+        events:
+          DROP_FOOD:
+            enabled: true
+            weight: 1400
+  medical:
+    item:
+      material: REDSTONE_BLOCK # Красный блок для медицины
+      custom-model-data: 1006
+    levels:
+      1:
+        display-name: "&dМедицинский ЛакиБлок &eI уровня"
+        events:
+          HEAL:
+            enabled: true
+            weight: 1000
+            # amount: 10 # Пример как можно будет расширить (исцелить на 10 сердец)
+      2:
+        display-name: "&dМедицинский ЛакиБлок &eII уровня"
+        events:
+          HEAL:
+            enabled: true
+            weight: 1100
+      3:
+        display-name: "&dМедицинский ЛакиБлок &eIII уровня"
+        events:
+          HEAL:
+            enabled: true
+            weight: 1200
+      4:
+        display-name: "&dМедицинский ЛакиБлок &eIV уровня"
+        events:
+          HEAL:
+            enabled: true
+            weight: 1300
+      5:
+        display-name: "&dМедицинский ЛакиБлок &eV уровня"
+        events:
+          HEAL:
+            enabled: true
+            weight: 1400
+  weapon:
+    item:
+      material: NETHERITE_BLOCK # Для мощного оружия
+      custom-model-data: 1007
+    levels:
+      1:
+        display-name: "&8Оружейный ЛакиБлок &eI уровня"
+        events:
+          DROP_WEAPON:
+            enabled: true
+            weight: 1000
+            # item: IRON_SWORD # Пример
+      2:
+        display-name: "&8Оружейный ЛакиБлок &eII уровня"
+        events:
+          DROP_WEAPON:
+            enabled: true
+            weight: 1100
+      3:
+        display-name: "&8Оружейный ЛакиБлок &eIII уровня"
+        events:
+          DROP_WEAPON:
+            enabled: true
+            weight: 1200
+      4:
+        display-name: "&8Оружейный ЛакиБлок &eIV уровня"
+        events:
+          DROP_WEAPON:
+            enabled: true
+            weight: 1300
+      5:
+        display-name: "&8Оружейный ЛакиБлок &eV уровня"
+        events:
+          DROP_WEAPON:
+            enabled: true
+            weight: 1400
+# Глобальные настройки, если нужны. Текущий ConfigManager их не использует, но можно добавить.
+# settings:
+#   default-luckyblock-material: SPONGE
+#   default-luckyblock-cmd: 0
+#   default-level: 1 # Это поле больше не используется для определения min/max, но может быть полезно для команды /luckyblock без указания уровня
+#   max-level: 5     # Это поле больше не используется

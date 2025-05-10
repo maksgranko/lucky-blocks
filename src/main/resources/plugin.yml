@@ -1,0 +1,12 @@
+name: LuckyBlocks
+version: '1.0-SNAPSHOT'
+main: net.ayronix.luckyblocks.LuckyBlockPlugin
+api-version: '1.21'
+commands:
+  luckyblock:
+    description: Выдать лаки-блоки игроку
+    usage: /<command> <type> <level> [count]
+permissions:
+  luckyblocks.use:
+    description: Разрешает использовать команду /luckyblock
+    default: op
