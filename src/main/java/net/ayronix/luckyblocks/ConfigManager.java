@@ -5,9 +5,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class ConfigManager
 {
@@ -18,9 +16,7 @@ public class ConfigManager
     public ConfigManager(LuckyBlockPlugin plugin)
     {
         this.plugin = plugin;
-        this.config = plugin.getConfigFile(); // Предполагается, что
-                                              // luckyblocksConfig уже загружен
-                                              // в LuckyBlockPlugin
+        this.config = plugin.getConfigFile();
     }
 
     public Set<String> getAvailableTypes()
@@ -34,41 +30,30 @@ public class ConfigManager
         return typesSection.getKeys(false);
     }
 
+    @SuppressWarnings("LoggerStringConcat")
     public int getMinLevel(String type)
     {
         ConfigurationSection levelsSection = config.getConfigurationSection("types." + type + ".levels");
         if (levelsSection == null)
         {
             plugin.getLogger().warning("Секция 'types." + type + ".levels' не найдена!");
-            return 1; // Default to 1 if not found or no numeric keys
+            return 1;
         }
-        return levelsSection.getKeys(false).stream().filter(key -> key.matches("\\d+")) // Filter
-                                                                                        // out
-                                                                                        // non-numeric
-                                                                                        // keys
-                                                                                        // like
-                                                                                        // 'min',
-                                                                                        // 'max'
-                .mapToInt(Integer::parseInt).min().orElse(1); // Default to 1 if
-                                                              // no numeric keys
-                                                              // found
+        return levelsSection.getKeys(false).stream().filter(key -> key.matches("\\d+")).mapToInt(Integer::parseInt)
+                .min().orElse(1);
     }
 
+    @SuppressWarnings("LoggerStringConcat")
     public int getMaxLevel(String type)
     {
         ConfigurationSection levelsSection = config.getConfigurationSection("types." + type + ".levels");
         if (levelsSection == null)
         {
             plugin.getLogger().warning("Секция 'types." + type + ".levels' не найдена!");
-            return 1; // Default to 1 if not found or no numeric keys
+            return 1;
         }
-        return levelsSection.getKeys(false).stream().filter(key -> key.matches("\\d+")) // Filter
-                                                                                        // out
-                                                                                        // non-numeric
-                                                                                        // keys
-                .mapToInt(Integer::parseInt).max().orElse(1); // Default to 1 if
-                                                              // no numeric keys
-                                                              // found
+        return levelsSection.getKeys(false).stream().filter(key -> key.matches("\\d+")).mapToInt(Integer::parseInt)
+                .max().orElse(1);
     }
 
     public boolean isValidLevel(String type, int level)
@@ -77,11 +62,10 @@ public class ConfigManager
         return levelConfig != null;
     }
 
+    @SuppressWarnings("LoggerStringConcat")
     public Material getLuckyBlockMaterial(String type)
     {
-        String materialName = config.getString("types." + type + ".item.material", "SPONGE"); // Default
-                                                                                              // to
-                                                                                              // SPONGE
+        String materialName = config.getString("types." + type + ".item.material", "SPONGE");
         try
         {
             return Material.valueOf(materialName.toUpperCase());
@@ -95,9 +79,7 @@ public class ConfigManager
 
     public int getLuckyBlockCustomModelData(String type)
     {
-        return config.getInt("types." + type + ".item.custom-model-data", 0); // Default
-                                                                              // to
-                                                                              // 0
+        return config.getInt("types." + type + ".item.custom-model-data", 0);
     }
 
     public String getDisplayName(String type, int level)

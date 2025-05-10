@@ -23,7 +23,6 @@ public class HealEvent implements ICustomEvent
         {
             player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
         }
-        player.sendMessage("§cВы исцелены!"); // Сообщение тоже можно будет
-                                              // настраивать
+        player.sendMessage("§cВы исцелены!");
     }
 }

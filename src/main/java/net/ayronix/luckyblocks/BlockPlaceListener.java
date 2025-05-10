@@ -13,6 +13,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 public class BlockPlaceListener implements Listener
 {
+    @SuppressWarnings("unused")
     private final LuckyBlockPlugin plugin;
 
     public BlockPlaceListener(LuckyBlockPlugin plugin)

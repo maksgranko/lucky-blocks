@@ -3,33 +3,29 @@ package net.ayronix.luckyblocks;
 import net.ayronix.luckyblocks.events.ICustomEvent;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection; // Порядок может измениться автоформатированием
+import org.bukkit.configuration.ConfigurationSection;
 
-import java.util.ArrayList; // Добавлен
-import java.util.List; // Добавлен
-import java.util.Random; // Добавлен
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 public class BlockBreakListener implements Listener
 {
 
-    private LuckyBlockPlugin plugin;
+    private final LuckyBlockPlugin plugin;
 
     public BlockBreakListener(LuckyBlockPlugin plugin)
     {
         this.plugin = plugin;
     }
 
-    private final Random random = new Random();
-
-    @EventHandler
+    @EventHandler @SuppressWarnings("LoggerStringConcat")
     public void onBlockBreak(BlockBreakEvent event)
     {
         Block block = event.getBlock();
@@ -102,8 +98,6 @@ public class BlockBreakListener implements Listener
             }
         } else
         {
-            // Никакое событие не выбрано (например, все веса 0 или все
-            // отключены)
             plugin.getEventRegistry().get("DEFAULT").execute(player, block.getLocation(), null, plugin);
         }
     }

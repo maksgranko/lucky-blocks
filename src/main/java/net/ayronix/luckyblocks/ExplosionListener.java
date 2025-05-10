@@ -18,8 +18,8 @@ public class ExplosionListener implements Listener
     public void onEntityExplode(EntityExplodeEvent event)
     {
         Chunk chunk = null;
-        PersistentDataContainer pdc = null;
         List<String> coords = null;
+        PersistentDataContainer pdc;
 
         Iterator<Block> it = event.blockList().iterator();
         while (it.hasNext())

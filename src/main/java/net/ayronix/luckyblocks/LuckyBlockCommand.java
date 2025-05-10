@@ -1,7 +1,6 @@
 package net.ayronix.luckyblocks;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -17,12 +16,10 @@ import java.util.Set;
 public class LuckyBlockCommand implements CommandExecutor
 {
 
-    private final LuckyBlockPlugin plugin;
     private final ConfigManager configManager;
 
     public LuckyBlockCommand(LuckyBlockPlugin plugin)
     {
-        this.plugin = plugin;
         this.configManager = plugin.getConfigManager();
     }
 
@@ -91,10 +88,7 @@ public class LuckyBlockCommand implements CommandExecutor
         int customModelData = configManager.getLuckyBlockCustomModelData(type);
         String displayName = configManager.getDisplayName(type, level);
 
-        ItemStack luckyBlockItem = new ItemStack(material, 1); // Создаем по
-                                                               // одному, чтобы
-                                                               // корректно
-                                                               // выдать count
+        ItemStack luckyBlockItem = new ItemStack(material, 1);
         ItemMeta meta = luckyBlockItem.getItemMeta();
 
         if (meta != null)
@@ -113,12 +107,7 @@ public class LuckyBlockCommand implements CommandExecutor
 
         for (int i = 0; i < count; i++)
         {
-            player.getInventory().addItem(luckyBlockItem.clone()); // Клонируем,
-                                                                   // чтобы
-                                                                   // каждый
-                                                                   // предмет
-                                                                   // был
-                                                                   // отдельным
+            player.getInventory().addItem(luckyBlockItem.clone());
         }
 
         player.sendMessage(ChatColor.GREEN + "Вам выдан: " + ChatColor.translateAlternateColorCodes('&', displayName)

@@ -35,7 +35,7 @@ public final class LuckyBlockPlugin extends JavaPlugin
         return eventRegistry;
     }
 
-    @Override
+    @Override @SuppressWarnings("LoggerStringConcat")
     public void onEnable()
     {
         LUCKY_BLOCK_KEY = new NamespacedKey(this, "lucky_block");
@@ -55,9 +55,7 @@ public final class LuckyBlockPlugin extends JavaPlugin
         } catch (Exception e)
         {
             getLogger().severe("Ошибка загрузки конфига: " + e.getMessage());
-            luckyblocksConfig = new YamlConfiguration(); // Create an empty
-                                                         // config if loading
-                                                         // fails
+            luckyblocksConfig = new YamlConfiguration();
         }
 
         configManager = new ConfigManager(this);
@@ -65,32 +63,12 @@ public final class LuckyBlockPlugin extends JavaPlugin
 
         getServer().getPluginManager().registerEvents(new BlockPlaceListener(this), this);
         getServer().getPluginManager().registerEvents(new BlockBreakListener(this), this);
-        getServer().getPluginManager().registerEvents(new ExplosionListener(), this); // Keep
-                                                                                      // this
-                                                                                      // if
-                                                                                      // it
-                                                                                      // handles
-                                                                                      // general
-                                                                                      // explosions
-                                                                                      // not
-                                                                                      // tied
-                                                                                      // to
-                                                                                      // lucky
-                                                                                      // blocks
+        getServer().getPluginManager().registerEvents(new ExplosionListener(), this);
 
         if (getCommand("luckyblock") != null)
         {
-            getCommand("luckyblock").setExecutor(new LuckyBlockCommand(this)); // Это
-                                                                               // уже
-                                                                               // было
-                                                                               // исправлено,
-                                                                               // но
-                                                                               // ошибка
-                                                                               // компиляции
-                                                                               // указывает
-                                                                               // на
-                                                                               // старую
-                                                                               // версию
+            getCommand("luckyblock").setExecutor(new LuckyBlockCommand(this));
+
         } else
         {
             getLogger().severe("Команда 'luckyblock' не найдена!");
@@ -105,10 +83,7 @@ public final class LuckyBlockPlugin extends JavaPlugin
         eventRegistry.put("PORTAL", new PortalEvent());
         eventRegistry.put("HEAL", new HealEvent());
         eventRegistry.put("DROP_WEAPON", new DropWeaponEvent());
-        eventRegistry.put("DEFAULT", new DefaultEvent()); // For handling cases
-                                                          // where no specific
-                                                          // event is
-                                                          // found/enabled
+        eventRegistry.put("DEFAULT", new DefaultEvent());
     }
 
     @Override
