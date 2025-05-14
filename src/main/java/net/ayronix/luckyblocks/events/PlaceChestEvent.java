@@ -130,6 +130,11 @@ public class PlaceChestEvent implements ICustomEvent
             while (toGive > 0 && !emptySlots.isEmpty())
             {
                 int stack = Math.min(toGive, maxStack > 0 ? maxStack : 64);
+                if (emptySlots.isEmpty())
+                {
+                    break; // Защита от редких случаев, чтобы избежать ошибки
+                           // nextInt(0)
+                }
                 int slot = emptySlots.remove(rnd.nextInt(emptySlots.size()));
                 ItemStack stackItem = item.clone();
                 stackItem.setAmount(stack);
