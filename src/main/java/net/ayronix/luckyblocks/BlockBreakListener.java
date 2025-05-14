@@ -81,7 +81,8 @@ public class BlockBreakListener implements Listener
             List<String> coords = new java.util.ArrayList<>(existing);
             coords.remove(coord);
             pdc.set(LuckyBlockPlugin.LUCKY_BLOCK_KEY, PersistentDataType.LIST.strings(), coords);
-            plugin.getLogger().info("[LuckyBlocks] LuckyBlock удалён из чанка по координате: " + coord);
+            if (LuckyBlockPlugin.debug)
+                plugin.getLogger().info("[LuckyBlocks] LuckyBlock удалён из чанка по координате: " + coord);
         }
 
         if (eventTypeKey != null)

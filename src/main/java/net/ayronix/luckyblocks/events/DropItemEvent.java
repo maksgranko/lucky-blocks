@@ -158,12 +158,10 @@ public class DropItemEvent implements ICustomEvent
                 ? item.getItemMeta().getDisplayName()
                 : material.name();
 
-        String msg = "§e(Dev) Дроп: " + itemDisp + " x" + item.getAmount() + " на " + location.getBlockX() + ","
-                + location.getBlockY() + "," + location.getBlockZ() + " | " + pdcState;
-        player.sendMessage(msg);
-
-        plugin.getLogger().info("[DropItemEvent] " + itemDisp + " x" + item.getAmount() + " на " + location.getBlockX()
-                + "," + location.getBlockY() + "," + location.getBlockZ() + " | " + pdcState);
+        String msg = "[DropItemEvent][DEBUG] " + itemDisp + " x" + item.getAmount() + " на " + location.getBlockX()
+                + "," + location.getBlockY() + "," + location.getBlockZ() + " | " + pdcState;
+        if (LuckyBlockPlugin.debug)
+            plugin.getLogger().info(msg);
     }
 
     // Сравнение: совпадают ли координаты Location и строки entry из PDC

@@ -102,11 +102,15 @@ public class PlaceChestEvent implements ICustomEvent
         List<Map<String, Object>> itemsList = (List<Map<String, Object>>) selected.get("items");
         if (itemsList == null)
             itemsList = new ArrayList<>();
-        plugin.getLogger().info("PlaceChestEvent: [DEBUG] Взятый items: Всего=" + itemsList.size());
-        for (int ix = 0; ix < Math.min(5, itemsList.size()); ix++)
+        if (LuckyBlockPlugin.debug)
+            plugin.getLogger().info("PlaceChestEvent: [DEBUG] Взятый items: Всего=" + itemsList.size());
+        if (LuckyBlockPlugin.debug)
         {
-            Map<String, Object> itemMap = itemsList.get(ix);
-            plugin.getLogger().info("PlaceChestEvent: item[" + ix + "] = " + itemMap);
+            for (int ix = 0; ix < Math.min(5, itemsList.size()); ix++)
+            {
+                Map<String, Object> itemMap = itemsList.get(ix);
+                plugin.getLogger().info("PlaceChestEvent: item[" + ix + "] = " + itemMap);
+            }
         }
 
         ItemStack[] contents = new ItemStack[slots];
@@ -118,7 +122,8 @@ public class PlaceChestEvent implements ICustomEvent
         for (Map<String, Object> info : itemsList)
         {
             ItemStack item = createItemStackFromMap(info);
-            plugin.getLogger().info("DEBUG: ItemStack создан: " + item.getType() + " x" + item.getAmount());
+            if (LuckyBlockPlugin.debug)
+                plugin.getLogger().info("DEBUG: ItemStack создан: " + item.getType() + " x" + item.getAmount());
             int amount = item.getAmount();
             int maxStack = item.getMaxStackSize();
             int toGive = amount;
@@ -128,8 +133,9 @@ public class PlaceChestEvent implements ICustomEvent
                 int slot = emptySlots.remove(rnd.nextInt(emptySlots.size()));
                 ItemStack stackItem = item.clone();
                 stackItem.setAmount(stack);
-                plugin.getLogger()
-                        .info("DEBUG: Кладём в сундук slot " + slot + ": " + stackItem.getType() + " x" + stack);
+                if (LuckyBlockPlugin.debug)
+                    plugin.getLogger()
+                            .info("DEBUG: Кладём в сундук slot " + slot + ": " + stackItem.getType() + " x" + stack);
                 contents[slot] = stackItem;
                 toGive -= stack;
             }
@@ -198,51 +204,64 @@ public class PlaceChestEvent implements ICustomEvent
                             if (freshBlock.getState() instanceof Chest)
                             {
                                 Chest freshChest = (Chest) freshBlock.getState();
-                                plugin.getLogger()
-                                        .info("[ChestDebug] freshChest: " + freshChest + " at "
-                                                + freshBlock.getLocation() + ", isPlaced=" + freshBlock.getType()
-                                                + ", inventorySize=" + freshChest.getInventory().getSize());
+                                if (LuckyBlockPlugin.debug)
+                                {
+                                    plugin.getLogger()
+                                            .info("[ChestDebug] freshChest: " + freshChest + " at "
+                                                    + freshBlock.getLocation() + ", isPlaced=" + freshBlock.getType()
+                                                    + ", inventorySize=" + freshChest.getInventory().getSize());
+                                }
 
                                 freshChest.setLootTable(null);
                                 freshChest.update(true, true);
 
                                 Inventory inv = freshChest.getInventory();
-                                plugin.getLogger().info("[ChestDebug] inventory до setItems: "
-                                        + java.util.Arrays.toString(inv.getContents()));
-                                plugin.getLogger().info(
-                                        "[ChestDebug] contents[] до setItems: " + java.util.Arrays.toString(contents));
+                                if (LuckyBlockPlugin.debug)
+                                    plugin.getLogger().info("[ChestDebug] inventory до setItems: "
+                                            + java.util.Arrays.toString(inv.getContents()));
+                                if (LuckyBlockPlugin.debug)
+                                    plugin.getLogger().info("[ChestDebug] contents[] до setItems: "
+                                            + java.util.Arrays.toString(contents));
 
                                 StringBuilder lootList = new StringBuilder();
                                 for (int idx = 0; idx < contents.length; idx++)
                                 {
                                     if (contents[idx] != null)
                                     {
-                                        plugin.getLogger()
-                                                .info("[ChestDebug] inv.setItem(" + idx + ", " + contents[idx] + ")");
+                                        if (LuckyBlockPlugin.debug)
+                                            plugin.getLogger().info(
+                                                    "[ChestDebug] inv.setItem(" + idx + ", " + contents[idx] + ")");
                                         inv.setItem(idx, contents[idx]);
                                         lootList.append(contents[idx].getType().name()).append(" x")
                                                 .append(contents[idx].getAmount()).append(", ");
                                     }
                                 }
-                                plugin.getLogger().info("[ChestDebug] inventory после setItems: "
-                                        + java.util.Arrays.toString(inv.getContents()));
+                                if (LuckyBlockPlugin.debug)
+                                    plugin.getLogger().info("[ChestDebug] inventory после setItems: "
+                                            + java.util.Arrays.toString(inv.getContents()));
                                 // freshChest.update(true, true); // УБРАНО для
                                 // теста причины исчезновения содержимого!
 
-                                plugin.getLogger().info("[ChestDebug] inventory после возможного update: "
-                                        + java.util.Arrays.toString(inv.getContents()));
-                                plugin.getLogger()
-                                        .info("[ChestDebug] contents массив: " + java.util.Arrays.toString(contents));
-                                plugin.getLogger().info("[ChestDebug] finalChest=" + freshChest + ", inv=" + inv
-                                        + ", invSize=" + inv.getSize());
+                                if (LuckyBlockPlugin.debug)
+                                    plugin.getLogger().info("[ChestDebug] inventory после возможного update: "
+                                            + java.util.Arrays.toString(inv.getContents()));
+                                if (LuckyBlockPlugin.debug)
+                                    plugin.getLogger().info(
+                                            "[ChestDebug] contents массив: " + java.util.Arrays.toString(contents));
+                                if (LuckyBlockPlugin.debug)
+                                    plugin.getLogger().info("[ChestDebug] finalChest=" + freshChest + ", inv=" + inv
+                                            + ", invSize=" + inv.getSize());
 
                                 // Сообщение в чат игроку с инфой о луте и
                                 // координате сундука
                                 String lootInfoStr = lootList.length() > 2
                                         ? lootList.substring(0, lootList.length() - 2)
                                         : "нет лута";
-                                player.sendMessage("§e(Dev) Сундук заполнен на " + chestLoc.getBlockX() + ","
-                                        + chestLoc.getBlockY() + "," + chestLoc.getBlockZ() + " - " + lootInfoStr);
+                                if (LuckyBlockPlugin.debug)
+                                    plugin.getLogger()
+                                            .info("[ChestDebug] summaryLootInfo at (" + chestLoc.getBlockX() + ","
+                                                    + chestLoc.getBlockY() + "," + chestLoc.getBlockZ() + "): "
+                                                    + lootInfoStr);
                             }
                         }
                     }.runTaskLater(plugin, 2);

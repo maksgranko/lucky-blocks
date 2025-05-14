@@ -15,8 +15,21 @@ import net.ayronix.luckyblocks.events.ExplosionEvent;
 import net.ayronix.luckyblocks.events.HealEvent;
 import net.ayronix.luckyblocks.events.ICustomEvent;
 
+/**
+ * LuckyBlockPlugin — главный класс плагина Lucky Blocks.
+ *
+ * Для управления отладкой используйте глобальный флаг debug: Если debug == true
+ * — все отладочные сообщения выводятся в server.log. Если debug == false — вся
+ * отладка подавляется.
+ */
 public final class LuckyBlockPlugin extends JavaPlugin
 {
+    /**
+     * Глобальный флаг для управления отладкой. Вся отладочная информация в
+     * плагине проходит только через этот флаг. При выключенном debug (по
+     * умолчанию) отладка не выводится вообще.
+     */
+    public static boolean debug = false;
     public static NamespacedKey LUCKY_BLOCK_KEY;
     public static NamespacedKey LUCKY_BLOCK_TYPE_KEY;
     public static NamespacedKey LUCKY_BLOCK_LEVEL_KEY;
