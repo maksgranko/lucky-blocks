@@ -1,19 +1,20 @@
 package net.ayronix.luckyblocks;
 
-import net.ayronix.luckyblocks.events.ICustomEvent;
-import org.bukkit.Chunk;
-import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.bukkit.Chunk;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+
+import net.ayronix.luckyblocks.events.ICustomEvent;
 
 public class BlockBreakListener implements Listener
 {
@@ -73,21 +74,23 @@ public class BlockBreakListener implements Listener
 
         if (eventTypeKey != null)
         {
-            ICustomEvent eventHandler = plugin.getEventRegistry().get(eventTypeKey.toUpperCase());
+            String baseKey = eventTypeKey.split("#")[0].toUpperCase();
+            ICustomEvent eventHandler = plugin.getEventRegistry().get(baseKey);
             if (eventHandler != null)
             {
                 ConfigurationSection eventSpecificConfig = configManager.getEventConfig(type, level, eventTypeKey);
-                // Проверка eventSpecificConfig.getBoolean("enabled", true) уже
-                // должна быть в ProbabilityCalculator
-                // или здесь, если ProbabilityCalculator возвращает ключ даже
-                // для отключенных
                 if (eventSpecificConfig != null && eventSpecificConfig.getBoolean("enabled", true))
                 {
-                    eventHandler.execute(player, block.getLocation(), eventSpecificConfig, plugin);
+                    // Для PLACE_CHEST и других ивентов — подмешиваем
+                    // _luckyblock_type/_level
+                    org.bukkit.configuration.MemoryConfiguration enhancedConfig = new org.bukkit.configuration.MemoryConfiguration();
+                    for (String key : eventSpecificConfig.getKeys(false))
+                        enhancedConfig.set(key, eventSpecificConfig.get(key));
+                    enhancedConfig.set("_luckyblock_type", type);
+                    enhancedConfig.set("_luckyblock_level", level);
+                    eventHandler.execute(player, block.getLocation(), enhancedConfig, plugin);
                 } else
                 {
-                    // Событие отключено или не найдена конфигурация, вызываем
-                    // "дефолтное" событие
                     plugin.getEventRegistry().get("DEFAULT").execute(player, block.getLocation(), null, plugin);
                 }
             } else

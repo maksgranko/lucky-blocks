@@ -1,11 +1,11 @@
 package net.ayronix.luckyblocks;
 
-import org.bukkit.configuration.ConfigurationSection;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
+import org.bukkit.configuration.ConfigurationSection;
 
 public class ProbabilityCalculator
 {
@@ -26,17 +26,40 @@ public class ProbabilityCalculator
 
         for (String eventKey : eventsSection.getKeys(false))
         {
-            ConfigurationSection eventConfig = eventsSection.getConfigurationSection(eventKey);
-            if (eventConfig != null && (eventConfig.getBoolean("enabled", true)))
+            Object value = eventsSection.get(eventKey);
+            if (value instanceof List<?> cfgList)
             {
-                int weight = eventConfig.getInt("weight", 0);
-                if (weight > 0)
+                int idx = 0;
+                for (Object obj : cfgList)
                 {
-                    // Вместо getValues(false) которое возвращает Map<String,
-                    // Object> где Object это ConfigurationSection,
-                    // нам нужен сам вес. Мы уже получили eventConfig.
-                    enabledEventWeights.add(Map.entry(eventKey, weight));
-                    totalWeight += weight;
+                    if (obj instanceof Map<?, ?> map)
+                    {
+                        boolean enabled = true;
+                        if (map.containsKey("enabled"))
+                            enabled = Boolean.parseBoolean(String.valueOf(map.get("enabled")));
+                        int weight = 0;
+                        if (map.containsKey("weight"))
+                            weight = Integer.parseInt(String.valueOf(map.get("weight")));
+                        if (enabled && weight > 0)
+                        {
+                            // гарантия уникальности: eventKey#N
+                            enabledEventWeights.add(Map.entry(eventKey + "#" + idx, weight));
+                            totalWeight += weight;
+                        }
+                    }
+                    idx++;
+                }
+            } else
+            {
+                ConfigurationSection eventConfig = eventsSection.getConfigurationSection(eventKey);
+                if (eventConfig != null && (eventConfig.getBoolean("enabled", true)))
+                {
+                    int weight = eventConfig.getInt("weight", 0);
+                    if (weight > 0)
+                    {
+                        enabledEventWeights.add(Map.entry(eventKey, weight));
+                        totalWeight += weight;
+                    }
                 }
             }
         }

@@ -1,0 +1,49 @@
+positive:
+  main_loot:
+    slots: 27
+    loot:
+      - items:
+          - material: DIAMOND
+            amount: 16
+          - material: STICK
+            amount: 21
+        weight: 30
+      - items:
+          - material: GOLD_INGOT
+            amount: 64
+        weight: 20
+  rare_loot:
+    slots: 27
+    loot:
+      - items:
+          - material: EMERALD
+            amount: 5
+          - material: GOLDEN_APPLE
+            amount: 1
+        weight: 10
+
+negative:
+  bad_loot:
+    slots: 27
+    loot:
+      - items:
+          - material: ROTTEN_FLESH
+            amount: 32
+        weight: 45
+      - items:
+          - material: STONE
+            amount: 100
+        weight: 10
+
+diamond:
+  epic_loot:
+    slots: 27
+    loot:
+      - items:
+          - material: DIAMOND_BLOCK
+            amount: 2
+          - material: ENCHANTED_GOLDEN_APPLE
+            amount: 1
+        weight: 5
+
+# Дополнительные категории можно расширять для других типов лаки-блоков

@@ -41,10 +41,22 @@ types:
                 relative-coords: { x: 0, y: 1, z: 0 }
               - material: EMERALD_BLOCK
                 relative-coords: { x: 2, y: 0, z: 0 }
+          COMMAND_EXEC:
+            enabled: true
+            weight: 60
+            command:
+              - "say %player% активировал лаки блок!"
+              - "give %player% diamond 3"
+          PLAYER_COMMAND:
+            enabled: true
+            weight: 40
+            command:
+              - "me %player% получил бонус!"
+              - "spawnpoint %player% %x% %y% %z%"
           PLACE_CHEST:
             enabled: true
-            weight: 50
-            item-table: main_loot
+            weight: 500
+            item-table: random
             relative-coords: { x: 1, y: 0, z: 0 }
       2:
         display-name: "&aПоложительный ЛакиБлок &eII уровня"

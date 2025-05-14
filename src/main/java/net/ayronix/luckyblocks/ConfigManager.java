@@ -1,11 +1,11 @@
 package net.ayronix.luckyblocks;
 
+import java.util.Collections;
+import java.util.Set;
+
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-
-import java.util.Collections;
-import java.util.Set;
 
 public class ConfigManager
 {
@@ -24,7 +24,7 @@ public class ConfigManager
         ConfigurationSection typesSection = config.getConfigurationSection("types");
         if (typesSection == null)
         {
-            plugin.getLogger().warning("Секция 'types' не найдена в config.yml!");
+            plugin.getLogger().warning("Секция 'types' не найдена в luckyblocks.yml!");
             return Collections.emptySet();
         }
         return typesSection.getKeys(false);
@@ -97,7 +97,33 @@ public class ConfigManager
 
     public ConfigurationSection getEventConfig(String type, int level, String eventKey)
     {
-        return config.getConfigurationSection("types." + type + ".levels." + level + ".events." + eventKey);
+        String[] split = eventKey.split("#");
+        String key = split[0];
+        int index = (split.length > 1) ? Integer.parseInt(split[1]) : -1;
+        String path = "types." + type + ".levels." + level + ".events." + key;
+        Object eventSectionObj = config.get(path);
+        if (index >= 0 && eventSectionObj instanceof java.util.List<?> list)
+        {
+            Object entryObj = (index < list.size()) ? list.get(index) : null;
+            if (entryObj instanceof org.bukkit.configuration.ConfigurationSection cs)
+            {
+                return cs;
+            } else if (entryObj instanceof java.util.Map<?, ?> map)
+            {
+                // workaround для случаев, когда yaml парсит не как
+                // ConfigurationSection
+                // а как Map (сплошь и рядом при list-структуре)
+                // создаем временную секцию, запихиваем туда map
+                org.bukkit.configuration.MemoryConfiguration tempSection = new org.bukkit.configuration.MemoryConfiguration();
+                map.forEach((k, v) -> tempSection.set(String.valueOf(k), v));
+                return tempSection;
+            }
+            // если нет такого элемента, вернем null
+            return null;
+        } else
+        {
+            return config.getConfigurationSection(path);
+        }
     }
 
     public FileConfiguration getRawConfig()

@@ -1,15 +1,19 @@
 package net.ayronix.luckyblocks;
 
-import net.ayronix.luckyblocks.events.*;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+import net.ayronix.luckyblocks.events.DefaultEvent;
+import net.ayronix.luckyblocks.events.ExplosionEvent;
+import net.ayronix.luckyblocks.events.HealEvent;
+import net.ayronix.luckyblocks.events.ICustomEvent;
 
 public final class LuckyBlockPlugin extends JavaPlugin
 {
@@ -43,11 +47,17 @@ public final class LuckyBlockPlugin extends JavaPlugin
         LUCKY_BLOCK_TYPE_KEY = new NamespacedKey(this, "lucky_block_type");
         LUCKY_BLOCK_LEVEL_KEY = new NamespacedKey(this, "lucky_block_level");
 
-        File configFile = new File(getDataFolder(), "config.yml");
+        File configFile = new File(getDataFolder(), "luckyblocks.yml");
         if (!configFile.exists())
         {
-            saveResource("config.yml", false);
-            getLogger().info("Создан новый конфиг config.yml");
+            saveResource("luckyblocks.yml", false);
+            getLogger().info("Не найден luckyblocks.yml. Выгружен шаблон.");
+        }
+        File chestsFile = new File(getDataFolder(), "chests.yml");
+        if (!chestsFile.exists())
+        {
+            saveResource("chests.yml", false);
+            getLogger().info("Не найден chests.yml. Выгружен шаблон.");
         }
 
         try
@@ -55,7 +65,7 @@ public final class LuckyBlockPlugin extends JavaPlugin
             luckyblocksConfig = YamlConfiguration.loadConfiguration(configFile);
         } catch (Exception e)
         {
-            getLogger().severe("Ошибка загрузки конфига: " + e.getMessage());
+            getLogger().severe("Ошибка загрузки luckyblocks.yml: " + e.getMessage());
             luckyblocksConfig = new YamlConfiguration();
         }
 
@@ -65,9 +75,7 @@ public final class LuckyBlockPlugin extends JavaPlugin
         getServer().getPluginManager().registerEvents(new BlockPlaceListener(this), this);
         getServer().getPluginManager().registerEvents(new BlockBreakListener(this), this);
         getServer().getPluginManager().registerEvents(new ExplosionListener(this), this);
-        getServer().getPluginManager().registerEvents(new BlockProtectionListener(this), this); // Регистрируем
-                                                                                                // новый
-                                                                                                // слушатель
+        getServer().getPluginManager().registerEvents(new BlockProtectionListener(this), this);
         PluginCommand cmd = getCommand("luckyblock");
         if (cmd != null)
         {
@@ -82,11 +90,41 @@ public final class LuckyBlockPlugin extends JavaPlugin
     {
         eventRegistry = new HashMap<>();
         eventRegistry.put("EXPLOSION", new ExplosionEvent());
-        eventRegistry.put("DROP_FOOD", new DropFoodEvent());
-        eventRegistry.put("PORTAL", new PortalEvent());
+        eventRegistry.put("DROP_ITEM", new net.ayronix.luckyblocks.events.DropItemEvent());
+        eventRegistry.put("PLACE_BLOCK", new net.ayronix.luckyblocks.events.PlaceBlockEvent());
+        eventRegistry.put("PLACE_CHEST", new net.ayronix.luckyblocks.events.PlaceChestEvent());
+        eventRegistry.put("COMMAND_EXEC", new net.ayronix.luckyblocks.events.CommandExecEvent());
+        eventRegistry.put("PLAYER_COMMAND", new net.ayronix.luckyblocks.events.PlayerCommandEvent());
         eventRegistry.put("HEAL", new HealEvent());
-        eventRegistry.put("DROP_WEAPON", new DropWeaponEvent());
         eventRegistry.put("DEFAULT", new DefaultEvent());
+    }
+
+    public void reloadConfigAndChests()
+    {
+        File configFile = new File(getDataFolder(), "luckyblocks.yml");
+        if (!configFile.exists())
+        {
+            saveResource("luckyblocks.yml", false);
+        }
+        File chestsFile = new File(getDataFolder(), "chests.yml");
+        if (!chestsFile.exists())
+        {
+            saveResource("chests.yml", false);
+        }
+        try
+        {
+            luckyblocksConfig = YamlConfiguration.loadConfiguration(configFile);
+        } catch (Exception e)
+        {
+            getLogger().severe("Ошибка загрузки luckyblocks.yml: " + e.getMessage());
+            luckyblocksConfig = new YamlConfiguration();
+        }
+        // Обновить менеджер
+        configManager = new ConfigManager(this);
+        // В будущем можно также добавить reload для chests.yml или других
+        // ресурсов
+
+        getLogger().info("Конфиги успешно перезагружены (config.yml, manager).");
     }
 
     @Override
