@@ -31,19 +31,19 @@ public class DropItemEvent implements ICustomEvent
             {
                 if (obj instanceof Map<?, ?> map)
                 {
-                    dropItemFromMap(player, location, map);
+                    dropItemFromMap(player, location, map, plugin);
                 }
             }
         } else
         {
             // старый вариант — один предмет из параметров
-            dropItemFromMap(player, location, eventConfig.getValues(false));
+            dropItemFromMap(player, location, eventConfig.getValues(false), plugin);
         }
 
     }
 
     // Поддержка логики дропа одного предмета по параметрам
-    private void dropItemFromMap(Player player, Location location, Map<?, ?> configMap)
+    private void dropItemFromMap(Player player, Location location, Map<?, ?> configMap, LuckyBlockPlugin plugin)
     {
         Object matObj = configMap.get("item");
         String materialName = matObj != null ? String.valueOf(matObj) : "APPLE";
@@ -144,8 +144,44 @@ public class DropItemEvent implements ICustomEvent
         }
 
         location.getWorld().dropItemNaturally(location, item);
-        player.sendMessage("§aВыпал дроп: " + (item.getItemMeta() != null && item.getItemMeta().hasDisplayName()
+
+        // Проверяем PDC (лакиблок) в координате дропа
+        org.bukkit.Chunk chunk = location.getBlock().getChunk();
+        org.bukkit.persistence.PersistentDataContainer chunkPDC = chunk.getPersistentDataContainer();
+        java.util.List<String> luckyCoords = chunkPDC.get(net.ayronix.luckyblocks.LuckyBlockPlugin.LUCKY_BLOCK_KEY,
+                org.bukkit.persistence.PersistentDataType.LIST.strings());
+        boolean isLuckyBlockPDC = luckyCoords != null
+                && luckyCoords.stream().anyMatch(entry -> matchesLocation(location, entry));
+        String pdcState = isLuckyBlockPDC ? "В PDC присутствует лакиблок" : "В PDC НЕТ лакиблока";
+
+        String itemDisp = item.getItemMeta() != null && item.getItemMeta().hasDisplayName()
                 ? item.getItemMeta().getDisplayName()
-                : material.name()));
+                : material.name();
+
+        String msg = "§e(Dev) Дроп: " + itemDisp + " x" + item.getAmount() + " на " + location.getBlockX() + ","
+                + location.getBlockY() + "," + location.getBlockZ() + " | " + pdcState;
+        player.sendMessage(msg);
+
+        plugin.getLogger().info("[DropItemEvent] " + itemDisp + " x" + item.getAmount() + " на " + location.getBlockX()
+                + "," + location.getBlockY() + "," + location.getBlockZ() + " | " + pdcState);
+    }
+
+    // Сравнение: совпадают ли координаты Location и строки entry из PDC
+    // ("x,y,z,type,level")
+    private boolean matchesLocation(org.bukkit.Location loc, String entry)
+    {
+        String[] parts = entry.split(",");
+        if (parts.length < 3)
+            return false;
+        try
+        {
+            int x = Integer.parseInt(parts[0]);
+            int y = Integer.parseInt(parts[1]);
+            int z = Integer.parseInt(parts[2]);
+            return loc.getBlockX() == x && loc.getBlockY() == y && loc.getBlockZ() == z;
+        } catch (NumberFormatException e)
+        {
+            return false;
+        }
     }
 }

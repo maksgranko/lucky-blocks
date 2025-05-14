@@ -3,23 +3,33 @@ positive:
     slots: 27
     loot:
       - items:
-          - material: DIAMOND
-            amount: 16
-          - material: STICK
-            amount: 21
-        weight: 30
-      - items:
-          - material: GOLD_INGOT
-            amount: 64
-        weight: 20
-  rare_loot:
-    slots: 27
-    loot:
-      - items:
-          - material: EMERALD
+          - item: DIAMOND
             amount: 5
-          - material: GOLDEN_APPLE
+            name: "§bАлмаз (loot)"
+          - item: STICK
+            amount: 10
+            name: "§6Супер палка (loot)"
+            custom-model-data: 1
+            lore: |
+              &7Палка из сундука
+              &bМожет быть продана жителю!
+            attributes:
+              - attribute: GENERIC_ATTACK_DAMAGE
+                amount: 2
+                operation: ADD_NUMBER
+          - item: GOLDEN_APPLE
             amount: 1
+            name: "§eЗолотое яблоко"
+          - item: PAPER
+            amount: 1
+            name: "&aБумажка as EMERALD"
+            custom-model-data: 1000
+            lore: "&7Это пример предмета с нестандартным item/material, который будет отображаться как бумага."
+        weight: 50
+      - items:
+          - item: DIRT
+            amount: 64
+            name: "§7Грязь выиграна честно!"
         weight: 10
 
 negative:
@@ -27,23 +37,11 @@ negative:
     slots: 27
     loot:
       - items:
-          - material: ROTTEN_FLESH
-            amount: 32
-        weight: 45
-      - items:
-          - material: STONE
-            amount: 100
-        weight: 10
-
-diamond:
-  epic_loot:
-    slots: 27
-    loot:
-      - items:
-          - material: DIAMOND_BLOCK
-            amount: 2
-          - material: ENCHANTED_GOLDEN_APPLE
+          - item: STICK
             amount: 1
-        weight: 5
-
-# Дополнительные категории можно расширять для других типов лаки-блоков
+            name: "§cПлохая палка"
+            custom-model-data: 3
+      - items:
+          - item: DIRT
+            amount: 5
+            name: "&8Очень плохая грязь"

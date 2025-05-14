@@ -24,17 +24,17 @@ public class PlaceBlockEvent implements ICustomEvent
             {
                 if (obj instanceof Map<?, ?> map)
                 {
-                    placeBlockFromMap(player, location, map);
+                    placeBlockFromMap(player, location, map, plugin);
                 }
             }
         } else
         {
-            placeBlockFromMap(player, location, eventConfig.getValues(false));
+            placeBlockFromMap(player, location, eventConfig.getValues(false), plugin);
         }
     }
 
     // Метод для установки одного блока по свойствам из map
-    private void placeBlockFromMap(Player player, Location location, Map<?, ?> map)
+    private void placeBlockFromMap(Player player, Location location, Map<?, ?> map, LuckyBlockPlugin plugin)
     {
         Object matObj = map.get("material");
         String materialName = matObj != null ? String.valueOf(matObj) : "STONE";
@@ -56,15 +56,87 @@ public class PlaceBlockEvent implements ICustomEvent
 
         Location placeLoc = location.clone().add(dx, dy, dz);
         Block block = placeLoc.getBlock();
-        block.setType(material);
 
-        // Пока custom-model-data для блока не используется напрямую
-        if (cModelData > 0)
+        // Проверка наличия лаки-блока по PDC чанка
+        org.bukkit.Chunk chunk = block.getChunk();
+        org.bukkit.persistence.PersistentDataContainer chunkPDC = chunk.getPersistentDataContainer();
+        java.util.List<String> luckyCoords = chunkPDC.get(net.ayronix.luckyblocks.LuckyBlockPlugin.LUCKY_BLOCK_KEY,
+                org.bukkit.persistence.PersistentDataType.LIST.strings());
+
+        if (luckyCoords != null && luckyCoords.stream().anyMatch(entry -> matchesLocation(placeLoc, entry)))
         {
-            // см. пояснение выше
+            plugin.getLogger().warning("[PlaceBlockEvent] Попытка подменить лакиблок по координате " + placeLoc
+                    + " — операция запрещена!");
+            return;
         }
+        // Если замена разрешена, сразу удалить координату из allowReplaceSet
+        // (однократное разрешение)
+        if (net.ayronix.luckyblocks.LuckyBlockReplaceManager.mayReplace(placeLoc))
+        {
+            net.ayronix.luckyblocks.LuckyBlockReplaceManager.remove(placeLoc);
+            // safety: no touch to PDC if luckyCoords already NOT contains this
+            // loc
+        }
+
+        final Material fMaterial = material;
+        final Block fBlock = block;
+        // Установка блока на следующий тик для корректной замены лаки-блока
+        new org.bukkit.scheduler.BukkitRunnable()
+        {
+            @Override
+            public void run()
+            {
+                Material oldType = fBlock.getType();
+                fBlock.setType(fMaterial, false);
+                // Получаем актуальный PDC чанка после установки
+                org.bukkit.Chunk actChunk = fBlock.getChunk();
+                org.bukkit.persistence.PersistentDataContainer actPdc = actChunk.getPersistentDataContainer();
+                java.util.List<String> luckyCoords = actPdc.get(
+                        net.ayronix.luckyblocks.LuckyBlockPlugin.LUCKY_BLOCK_KEY,
+                        org.bukkit.persistence.PersistentDataType.LIST.strings());
+
+                String key = net.ayronix.luckyblocks.LuckyBlockReplaceManager.locToKey(fBlock.getLocation());
+                StringBuilder pdcKeys = new StringBuilder();
+                if (luckyCoords != null)
+                {
+                    for (String lck : luckyCoords)
+                    {
+                        pdcKeys.append(lck).append("; ");
+                    }
+                }
+                boolean wasLuckyBlock = luckyCoords != null && luckyCoords.contains(key);
+
+                String pdcState = wasLuckyBlock ? "В PDC присутствует лакиблок" : "В PDC НЕТ лакиблока";
+                player.sendMessage("§e(Dev) Поставлен блок: " + fMaterial.name() + " на " + fBlock.getX() + ","
+                        + fBlock.getY() + "," + fBlock.getZ() + ", заменено: " + oldType.name() + " | " + pdcState
+                        + " | key=" + key + " | pdc-keys=[" + pdcKeys + "]");
+                plugin.getLogger()
+                        .info("[PlaceBlockEvent] Установлен блок: " + fMaterial.name() + " на " + fBlock.getX() + ","
+                                + fBlock.getY() + "," + fBlock.getZ() + ", заменено: " + oldType.name() + " | "
+                                + pdcState + " | key=" + key + " | pdc-keys=[" + pdcKeys + "]");
+            }
+        }.runTask(plugin);
 
         player.sendMessage(
                 "§aПоставлен блок: " + material.name() + " по координатам (" + dx + ", " + dy + ", " + dz + ")");
+    }
+
+    // Сравнение: совпадают ли координаты Location и строки entry из PDC
+    // ("x,y,z,type,level")
+    private boolean matchesLocation(org.bukkit.Location loc, String entry)
+    {
+        String[] parts = entry.split(",");
+        if (parts.length < 3)
+            return false;
+        try
+        {
+            int x = Integer.parseInt(parts[0]);
+            int y = Integer.parseInt(parts[1]);
+            int z = Integer.parseInt(parts[2]);
+            return loc.getBlockX() == x && loc.getBlockY() == y && loc.getBlockZ() == z;
+        } catch (NumberFormatException e)
+        {
+            return false;
+        }
     }
 }

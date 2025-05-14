@@ -1,6 +1,5 @@
 package net.ayronix.luckyblocks;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Chunk;
@@ -60,10 +59,6 @@ public class BlockBreakListener implements Listener
             return;
         }
 
-        List<String> coords = new ArrayList<>(existing);
-        coords.remove(coord);
-        pdc.set(LuckyBlockPlugin.LUCKY_BLOCK_KEY, PersistentDataType.LIST.strings(), coords);
-
         event.setDropItems(false);
         event.setExpToDrop(0);
         block.setType(Material.AIR);
@@ -71,6 +66,23 @@ public class BlockBreakListener implements Listener
         Player player = event.getPlayer();
         ConfigManager configManager = plugin.getConfigManager();
         String eventTypeKey = ProbabilityCalculator.getRandomEvent(configManager, type, level);
+
+        // Удаляем координату лакиблока из PDC, если НАГРАДА НЕ сундук
+        // (PLACE_CHEST)
+        // и обработчик не вызовет удаление самостоятельно
+        boolean isChestReward = false;
+        if (eventTypeKey != null)
+        {
+            String baseKey = eventTypeKey.split("#")[0].toUpperCase();
+            isChestReward = baseKey.equals("PLACE_CHEST");
+        }
+        if (!isChestReward)
+        {
+            List<String> coords = new java.util.ArrayList<>(existing);
+            coords.remove(coord);
+            pdc.set(LuckyBlockPlugin.LUCKY_BLOCK_KEY, PersistentDataType.LIST.strings(), coords);
+            plugin.getLogger().info("[LuckyBlocks] LuckyBlock удалён из чанка по координате: " + coord);
+        }
 
         if (eventTypeKey != null)
         {
@@ -88,9 +100,11 @@ public class BlockBreakListener implements Listener
                         enhancedConfig.set(key, eventSpecificConfig.get(key));
                     enhancedConfig.set("_luckyblock_type", type);
                     enhancedConfig.set("_luckyblock_level", level);
+                    net.ayronix.luckyblocks.LuckyBlockReplaceManager.allow(block.getLocation());
                     eventHandler.execute(player, block.getLocation(), enhancedConfig, plugin);
                 } else
                 {
+                    net.ayronix.luckyblocks.LuckyBlockReplaceManager.allow(block.getLocation());
                     plugin.getEventRegistry().get("DEFAULT").execute(player, block.getLocation(), null, plugin);
                 }
             } else
