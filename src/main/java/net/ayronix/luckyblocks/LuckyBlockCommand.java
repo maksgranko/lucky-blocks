@@ -31,30 +31,72 @@ public class LuckyBlockCommand implements CommandExecutor
         if (args.length == 0 || (args.length == 1 && args[0].equalsIgnoreCase("help")))
         {
             sender.sendMessage(ChatColor.GOLD + "LuckyBlock — команды:");
+            sender.sendMessage(ChatColor.YELLOW + "/" + label + " placemode on" + ChatColor.GRAY
+                    + " — режим расстановки лакиблоков");
+            sender.sendMessage(ChatColor.YELLOW + "/" + label + " placemode off" + ChatColor.GRAY
+                    + " — выключить placemode и вернуть хотбар");
+            sender.sendMessage(ChatColor.YELLOW + "/" + label + " placemode init" + ChatColor.GRAY
+                    + " — инициализировать лакиблоки на карте");
+            sender.sendMessage(ChatColor.YELLOW + "/" + label + " placemode save" + ChatColor.GRAY
+                    + " — сохранить точки лакиблоков карты");
+            sender.sendMessage(ChatColor.YELLOW + "/" + label + " <type> <level> [count]" + ChatColor.GRAY
+                    + " — получить лакиблок в инвентарь");
+            sender.sendMessage(ChatColor.YELLOW + "/" + label + " add chest-table <type> <имя>" + ChatColor.GRAY
+                    + " — экспортировать содержимое сундука как таблицу лута для лакиблока");
             sender.sendMessage(
                     ChatColor.YELLOW + "/" + label + " list" + ChatColor.GRAY + " — список всех типов лакиблоков");
             sender.sendMessage(
                     ChatColor.YELLOW + "/" + label + " reload" + ChatColor.GRAY + " — перезагрузить конфиги");
-            sender.sendMessage(ChatColor.YELLOW + "/" + label + " <type> <level> [count]" + ChatColor.GRAY
-                    + " — получить лакиблок");
-            sender.sendMessage(ChatColor.YELLOW + "/" + label + " add chest-table <type> <имя>" + ChatColor.GRAY
-                    + " — экспортировать содержимое сундука как таблицу лута для типа лакиблока");
-            sender.sendMessage(ChatColor.YELLOW + "---");
-            sender.sendMessage(ChatColor.YELLOW + "Типы событий запуска команд:");
-            sender.sendMessage(
-                    ChatColor.YELLOW + "- COMMAND_EXEC: команды выполняются от имени сервера (Bukkit console).");
-            sender.sendMessage(ChatColor.GRAY
-                    + "  COMMAND_EXEC:\n    enabled: true\n    weight: ...\n    command:\n      - \"say %player% активировал лаки блок!\"\n      - \"give %player% diamond 3\"");
-            sender.sendMessage(ChatColor.YELLOW + "- PLAYER_COMMAND: команды выполняет сам игрок.");
-            sender.sendMessage(ChatColor.GRAY
-                    + "  PLAYER_COMMAND:\n    enabled: true\n    weight: ...\n    command:\n      - \"me %player% получил бонус!\"\n      - \"spawnpoint %player% %x% %y% %z%\"");
-            sender.sendMessage(ChatColor.YELLOW
-                    + "В командах доступны переменные: %player%, @p, %x%, %y%, %z% (координаты лаки блока).");
             sender.sendMessage(ChatColor.YELLOW + "/" + label + " help" + ChatColor.GRAY + " — эта справка");
             return true;
         }
         if (args.length >= 1)
         {
+            // --- Placemode commands ---
+            if (args[0].equalsIgnoreCase("placemode"))
+            {
+                if (!(sender instanceof Player player))
+                {
+                    sender.sendMessage(ChatColor.RED + "Только игрок может использовать placemode.");
+                    return true;
+                }
+                if (!player.hasPermission("luckyblocks.placemode"))
+                {
+                    player.sendMessage(ChatColor.RED + "Нет прав для /" + label + " placemode.");
+                    return true;
+                }
+                if (args.length == 2 && args[1].equalsIgnoreCase("on"))
+                {
+                    // Включить режим placemode, выдача hotbar инициализация
+                    // сессии
+                    PlacemodeManager.getInstance().enableFor(player);
+                    return true;
+                }
+                if (args.length == 2 && args[1].equalsIgnoreCase("off"))
+                {
+                    // Отключить placemode, вернуть предметы
+                    PlacemodeManager.getInstance().disableFor(player);
+                    return true;
+                }
+                if (args.length == 2 && args[1].equalsIgnoreCase("init"))
+                {
+                    // Установить лакиблоки в сохранённых местах, загрузить из
+                    // мира
+                    PlacemodeManager.getInstance().loadBlocks(player.getWorld());
+                    PlacemodeManager.getInstance().initBlocks(player.getWorld());
+                    player.sendMessage(ChatColor.AQUA + "[LuckyBlock] Инициализация лакиблоков из карты завершена.");
+                    return true;
+                }
+                if (args.length == 2 && args[1].equalsIgnoreCase("save"))
+                {
+                    // Сохранить точки лакиблоков карты
+                    PlacemodeManager.getInstance().saveBlocks(player.getWorld());
+                    player.sendMessage(ChatColor.GREEN + "[LuckyBlock] Позиции лакиблоков для карты сохранены.");
+                    return true;
+                }
+                player.sendMessage(ChatColor.YELLOW + "Использование: /" + label + " placemode <on|off|init|save>");
+                return true;
+            }
             if (args[0].equalsIgnoreCase("reload"))
             {
                 if (!sender.hasPermission("luckyblocks.reload"))
