@@ -12,6 +12,7 @@ import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameRule;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -58,6 +59,15 @@ public class PlacemodeManager
         session.savedHotbar = savedHotbar;
         session.savedGameMode = player.getGameMode();
         session.savedLevel = player.getLevel();
+        // Сохраняем gamerule doMobGriefing
+        try
+        {
+            Boolean val = player.getWorld().getGameRuleValue(GameRule.MOB_GRIEFING);
+            session.savedDoMobGriefing = (val == null ? true : val);
+            player.getWorld().setGameRule(GameRule.MOB_GRIEFING, false);
+        } catch (Exception e)
+        {
+        }
         sessions.put(player.getUniqueId(), session);
 
         // Заменяем хотбар на placemode-инструменты
@@ -161,6 +171,16 @@ public class PlacemodeManager
             player.setFlying(false);
             player.setInvulnerable(false);
             player.sendMessage(ChatColor.YELLOW + "[LuckyBlock] Placemode завершён.");
+        }
+        // Восстановление gamerule doMobGriefing
+        try
+        {
+            if (session != null && session.savedDoMobGriefing != null)
+            {
+                player.getWorld().setGameRule(GameRule.MOB_GRIEFING, session.savedDoMobGriefing);
+            }
+        } catch (Exception e)
+        {
         }
     }
 

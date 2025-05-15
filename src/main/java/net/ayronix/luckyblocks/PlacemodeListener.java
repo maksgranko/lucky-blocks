@@ -11,6 +11,11 @@ import org.bukkit.inventory.ItemStack;
 
 public class PlacemodeListener implements Listener
 {
+    // Anti-double-click throttle: Храним последнюю координату установки для
+    // каждого игрока (timestamp)
+    private final java.util.Map<java.util.UUID, String> recentPlacements = new java.util.HashMap<>();
+    private final long blockPlaceLimitMs = 250L; // защита от даблклика 0.25с
+    private final java.util.Map<java.util.UUID, Long> lastPlacementTime = new java.util.HashMap<>();
 
     // Основной инструмент для размещения лакиблоков (пока blaze rod)
     private static final Material PLACER_TOOL = Material.BLAZE_ROD;
@@ -87,6 +92,18 @@ public class PlacemodeListener implements Listener
             String typeName = allTypes.get(next);
             session.setType(typeName);
             session.setTypeIndex(next);
+
+            // Показать в offhand материал лакиблока для текущего типа
+            org.bukkit.Material mat = org.bukkit.Material.GOLD_BLOCK;
+            org.bukkit.plugin.Plugin plugin = org.bukkit.Bukkit.getPluginManager().getPlugin("LuckyBlocks");
+            if (plugin instanceof net.ayronix.luckyblocks.LuckyBlockPlugin lbp)
+            {
+                org.bukkit.Material m = lbp.getConfigManager().getLuckyBlockMaterial(typeName);
+                if (m != null)
+                    mat = m;
+            }
+            player.getInventory().setItemInOffHand(new org.bukkit.inventory.ItemStack(mat));
+
             player.sendActionBar("§aТип лакиблока: §b" + typeName);
             event.setCancelled(true);
             return;
@@ -110,10 +127,45 @@ public class PlacemodeListener implements Listener
             if ((event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK)
                     && event.getClickedBlock() != null)
             {
-                loc = event.getClickedBlock().getLocation().clone().add(event.getBlockFace().getDirection());
+                // Новая логика позиционирования:
+                // Если клик по блоку: если сверху блок SNOW, заменяем его. В
+                // остальных случаях — ищем сверху первый AIR, но если клик
+                // сбоку, ставим по нормали, на блоке (не заменяем сам блок!)
+                var baseLoc = event.getClickedBlock().getLocation();
+                var face = event.getBlockFace();
+                var targetBlock = event.getClickedBlock().getRelative(face);
+
+                // Если это верх и это SNOW — заменяем, иначе ищем AIR выше
+                boolean isSnowLayer = targetBlock.getType() == org.bukkit.Material.SNOW;
+                if (isSnowLayer)
+                {
+                    loc = targetBlock.getLocation();
+                } else
+                {
+                    // Всегда "ставим" на соседний по нормали блок, если он не
+                    // занят (AIR или SNOW — заменить SNOW)
+                    if (targetBlock.getType() == org.bukkit.Material.AIR
+                            || targetBlock.getType() == org.bukkit.Material.SNOW)
+                    {
+                        loc = targetBlock.getLocation();
+                    } else
+                    {
+                        // Если все занято — ничего не делать
+                        player.sendActionBar("§cНет свободного пространства для установки лакиблока!");
+                        event.setCancelled(true);
+                        return;
+                    }
+                }
             } else if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_AIR)
             {
-                loc = player.getTargetBlock(null, 30).getLocation();
+                org.bukkit.block.Block rayBlock = player.getTargetBlock(null, 30);
+                if (rayBlock == null || rayBlock.getType() == Material.AIR)
+                {
+                    player.sendActionBar("§cПоверхность слишком далеко для установки лакиблока!");
+                    event.setCancelled(true);
+                    return;
+                }
+                loc = rayBlock.getLocation();
             }
             if (loc == null)
                 return;
@@ -125,6 +177,22 @@ public class PlacemodeListener implements Listener
 
             if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)
             {
+                // Throttle: если координата совпадает с прошлым действием
+                // игрока, и прошло < blockPlaceLimitMs — игнорируем
+                String coordKey = loc.getWorld().getName() + ":" + loc.getBlockX() + ":" + loc.getBlockY() + ":"
+                        + loc.getBlockZ() + ":" + blockType + ":" + blockLevel;
+                long now = System.currentTimeMillis();
+                boolean recentlyClicked = coordKey.equals(recentPlacements.get(player.getUniqueId()))
+                        && now - lastPlacementTime.getOrDefault(player.getUniqueId(), 0L) < blockPlaceLimitMs;
+
+                if (recentlyClicked)
+                {
+                    event.setCancelled(true);
+                    return;
+                }
+                recentPlacements.put(player.getUniqueId(), coordKey);
+                lastPlacementTime.put(player.getUniqueId(), now);
+
                 // Установка лакиблока (и запись в worldBlocks, и физически в
                 // мир)
                 BlockData add = new BlockData(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), blockType, blockLevel);

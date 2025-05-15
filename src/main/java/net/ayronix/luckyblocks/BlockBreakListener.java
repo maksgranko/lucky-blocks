@@ -29,6 +29,26 @@ public class BlockBreakListener implements Listener
     public void onBlockBreak(BlockBreakEvent event)
     {
         Block block = event.getBlock();
+        // --- PLACEMODE LOGIC: если это лакиблок placemode, удалить из
+        // worldBlocks + сохранить ---
+        java.util.List<net.ayronix.luckyblocks.BlockData> dataList = net.ayronix.luckyblocks.PlacemodeManager
+                .getInstance().getBlocksForWorld(block.getWorld());
+        net.ayronix.luckyblocks.BlockData match = null;
+        for (net.ayronix.luckyblocks.BlockData data : new java.util.ArrayList<>(dataList))
+        {
+            if (data.x == block.getX() && data.y == block.getY() && data.z == block.getZ())
+            {
+                match = data;
+                break;
+            }
+        }
+        if (match != null)
+        {
+            dataList.remove(match);
+            net.ayronix.luckyblocks.PlacemodeManager.getInstance().saveBlocks(block.getWorld());
+        }
+
+        // --- стандартная логика лакиблоков ---
         Chunk chunk = block.getChunk();
         PersistentDataContainer pdc = chunk.getPersistentDataContainer();
 

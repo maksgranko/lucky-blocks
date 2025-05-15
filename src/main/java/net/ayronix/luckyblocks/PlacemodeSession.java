@@ -21,6 +21,9 @@ public class PlacemodeSession
     public org.bukkit.GameMode savedGameMode = null;
     public int savedLevel = 0;
 
+    // Для gamerule doMobGriefing
+    public Boolean savedDoMobGriefing = null;
+
     // Дополнительно можно хранить старый инвентарь, хотбар и т.д.
 
     public PlacemodeSession(Player player, String type, int level, int minLevel, int maxLevel)
