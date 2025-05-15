@@ -17,6 +17,10 @@ public class PlacemodeSession
     // Слот для сохранения хотбара (0-8) — заполняется PlacemodeManager
     public org.bukkit.inventory.ItemStack[] savedHotbar = null;
 
+    // Сохраняем исходный GameMode и уровень игрока
+    public org.bukkit.GameMode savedGameMode = null;
+    public int savedLevel = 0;
+
     // Дополнительно можно хранить старый инвентарь, хотбар и т.д.
 
     public PlacemodeSession(Player player, String type, int level, int minLevel, int maxLevel)

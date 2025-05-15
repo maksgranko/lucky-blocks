@@ -54,8 +54,10 @@ public class PlacemodeManager
 
         // Выбрать дефолтные значения (можно расширить)
         PlacemodeSession session = new PlacemodeSession(player, "classic", 1, 1, 7);
-        // Сохраняем хотбар в сессию
+        // Сохраняем хотбар и состояние игрока
         session.savedHotbar = savedHotbar;
+        session.savedGameMode = player.getGameMode();
+        session.savedLevel = player.getLevel();
         sessions.put(player.getUniqueId(), session);
 
         // Заменяем хотбар на placemode-инструменты
@@ -139,6 +141,11 @@ public class PlacemodeManager
                 inv.setItem(i, session.savedHotbar[i]);
             }
 
+            // Восстанавливаем геймод и уровень
+            if (session.savedGameMode != null)
+                player.setGameMode(session.savedGameMode);
+            player.setLevel(session.savedLevel);
+
             // Отключить бессмертие и возможность полёта (оставляем SURVIVAL)
             player.setAllowFlight(false);
             player.setFlying(false);
@@ -147,6 +154,9 @@ public class PlacemodeManager
             player.sendMessage(ChatColor.YELLOW + "[LuckyBlock] Placemode завершён. Хотбар восстановлен.");
         } else if (session != null)
         {
+            if (session.savedGameMode != null)
+                player.setGameMode(session.savedGameMode);
+            player.setLevel(session.savedLevel);
             player.setAllowFlight(false);
             player.setFlying(false);
             player.setInvulnerable(false);
