@@ -60,14 +60,59 @@ public class PlacemodeManager
 
         // Заменяем хотбар на placemode-инструменты
         inv.clear(0);
-        inv.setItem(0, new org.bukkit.inventory.ItemStack(org.bukkit.Material.BLAZE_ROD, 1)); // инструмент
-        inv.setItem(1, new org.bukkit.inventory.ItemStack(org.bukkit.Material.SOUL_TORCH, 1)); // уровень
-                                                                                               // -
-        inv.setItem(2, new org.bukkit.inventory.ItemStack(org.bukkit.Material.REDSTONE_TORCH, 1)); // уровень
-                                                                                                   // +
-        inv.setItem(3, new org.bukkit.inventory.ItemStack(org.bukkit.Material.BLUE_WOOL, 1)); // type
-                                                                                              // смена
-                                                                                              // (пример)
+
+        // BLAZE_ROD — инструмент для размещения/удаления (подпись)
+        org.bukkit.inventory.ItemStack placer = new org.bukkit.inventory.ItemStack(org.bukkit.Material.BLAZE_ROD, 1);
+        org.bukkit.inventory.meta.ItemMeta placerMeta = placer.getItemMeta();
+        if (placerMeta != null)
+        {
+            placerMeta.setDisplayName(ChatColor.GOLD + "§lИнструмент: размещение/удаление лакиблоков");
+            placer.setItemMeta(placerMeta);
+        }
+        inv.setItem(0, placer);
+
+        // SOUL_TORCH — уровень вниз (подпись)
+        org.bukkit.inventory.ItemStack levelDown = new org.bukkit.inventory.ItemStack(org.bukkit.Material.SOUL_TORCH,
+                1);
+        org.bukkit.inventory.meta.ItemMeta downMeta = levelDown.getItemMeta();
+        if (downMeta != null)
+        {
+            downMeta.setDisplayName(ChatColor.AQUA + "Уменьшить уровень лакиблока");
+            levelDown.setItemMeta(downMeta);
+        }
+        inv.setItem(1, levelDown);
+
+        // REDSTONE_TORCH — уровень вверх (подпись)
+        org.bukkit.inventory.ItemStack levelUp = new org.bukkit.inventory.ItemStack(org.bukkit.Material.REDSTONE_TORCH,
+                1);
+        org.bukkit.inventory.meta.ItemMeta upMeta = levelUp.getItemMeta();
+        if (upMeta != null)
+        {
+            upMeta.setDisplayName(ChatColor.AQUA + "Увеличить уровень лакиблока");
+            levelUp.setItemMeta(upMeta);
+        }
+        inv.setItem(2, levelUp);
+
+        // BLUE_WOOL — смена типа (подпись)
+        org.bukkit.inventory.ItemStack typeSwitch = new org.bukkit.inventory.ItemStack(org.bukkit.Material.BLUE_WOOL,
+                1);
+        org.bukkit.inventory.meta.ItemMeta typeMeta = typeSwitch.getItemMeta();
+        if (typeMeta != null)
+        {
+            typeMeta.setDisplayName(ChatColor.LIGHT_PURPLE + "Сменить тип лакиблока");
+            typeSwitch.setItemMeta(typeMeta);
+        }
+        inv.setItem(3, typeSwitch);
+
+        // Последний (8-й) слот — Barrier для выхода из режима (подпись)
+        org.bukkit.inventory.ItemStack exitItem = new org.bukkit.inventory.ItemStack(org.bukkit.Material.BARRIER, 1);
+        org.bukkit.inventory.meta.ItemMeta exitMeta = exitItem.getItemMeta();
+        if (exitMeta != null)
+        {
+            exitMeta.setDisplayName(ChatColor.RED + "Выйти из режима Placemode");
+            exitItem.setItemMeta(exitMeta);
+        }
+        inv.setItem(8, exitItem);
 
         // Делаем игрока бессмертным, переводим в SURVIVAL и включаем полёт
         player.setGameMode(org.bukkit.GameMode.SURVIVAL);
@@ -77,8 +122,6 @@ public class PlacemodeManager
 
         // Устанавливаем уровень игрока = level лакиблока
         player.setLevel(session.getLevel());
-
-        // Остальные слоты по желанию, можно задать предметы для других типов
 
         player.sendMessage(ChatColor.GREEN
                 + "[LuckyBlock] Placemode запущен. Используйте хотбар для выбора типа и уровня лакиблока!");

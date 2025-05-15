@@ -94,6 +94,7 @@ public final class LuckyBlockPlugin extends JavaPlugin
         if (cmd != null)
         {
             cmd.setExecutor(new LuckyBlockCommand(this));
+            cmd.setTabCompleter(new LuckyBlockTabCompleter(this));
         } else
         {
             getLogger().severe("Команда 'luckyblock' не найдена!");

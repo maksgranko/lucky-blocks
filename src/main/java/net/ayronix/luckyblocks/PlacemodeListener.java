@@ -32,13 +32,12 @@ public class PlacemodeListener implements Listener
         if (session == null)
             return;
 
-        Material type = handItem.getType();
+        Material toolType = handItem.getType();
 
         // --- Смена уровня/типа ---
-        if (type == Material.SOUL_TORCH
+        if (toolType == Material.SOUL_TORCH
                 && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK))
         {
-            // Уровень вниз
             int lvl = session.getLevel();
             int min = session.getMinLevel();
             if (lvl > min)
@@ -53,10 +52,9 @@ public class PlacemodeListener implements Listener
             event.setCancelled(true);
             return;
         }
-        if (type == Material.REDSTONE_TORCH
+        if (toolType == Material.REDSTONE_TORCH
                 && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK))
         {
-            // Уровень вверх
             int lvl = session.getLevel();
             int max = session.getMaxLevel();
             if (lvl < max)
@@ -71,46 +69,114 @@ public class PlacemodeListener implements Listener
             event.setCancelled(true);
             return;
         }
-        if (type == Material.BLUE_WOOL
+
+        // --- Смена типа (BLUE_WOOL) — листаем из конфига! ---
+        if (toolType == Material.BLUE_WOOL
                 && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK))
         {
-            // Прототип: просто тип classic/super — в реальной версии перебор
-            // типов лакиблоков из конфига
-            String prevType = session.getType();
-            String newType = prevType.equals("classic") ? "super" : "classic";
-            session.setType(newType);
-            player.sendActionBar("§aТип лакиблока: §b" + newType);
+            java.util.List<String> allTypes = new java.util.ArrayList<>(net.ayronix.luckyblocks.LuckyBlockPlugin
+                    .getPlugin(net.ayronix.luckyblocks.LuckyBlockPlugin.class).getConfigManager().getAvailableTypes());
+            if (allTypes.isEmpty())
+            {
+                player.sendActionBar("§cНет доступных типов лакиблоков!");
+                event.setCancelled(true);
+                return;
+            }
+            int cur = session.getTypeIndex();
+            int next = (cur + 1) % allTypes.size();
+            String typeName = allTypes.get(next);
+            session.setType(typeName);
+            session.setTypeIndex(next);
+            player.sendActionBar("§aТип лакиблока: §b" + typeName);
             event.setCancelled(true);
             return;
         }
 
-        // --- Основной инструмент размещения ---
-        if (type == PLACER_TOOL
-                && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK))
+        // --- ВЫХОД из режима через Barrier (8-й слот) ЛКМ/ПКМ ---
+        if (toolType == Material.BARRIER
+                && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK
+                        || event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK))
         {
-            // Куда ставить блок? Если клик по блоку — берем соседнюю позицию по
-            // нормали. Если по воздуху — raytrace до 30 блоков
+            PlacemodeManager.getInstance().disableFor(player);
+            event.setCancelled(true);
+            return;
+        }
+
+        // --- Blaze Rod: ПКМ — поставить лакиблок как в config, ЛКМ — убрать,
+        // оба действия всегда обновляют worldBlocks ---
+        if (toolType == PLACER_TOOL)
+        {
             Location loc = null;
-            if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock() != null)
+            if ((event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK)
+                    && event.getClickedBlock() != null)
             {
                 loc = event.getClickedBlock().getLocation().clone().add(event.getBlockFace().getDirection());
-            } else
+            } else if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_AIR)
             {
-                // Raytrace по направлению взгляда
                 loc = player.getTargetBlock(null, 30).getLocation();
             }
             if (loc == null)
                 return;
 
-            // Добавить в кэш — записать в PlacemodeManager
             String blockType = session.getType();
             int blockLevel = session.getLevel();
-            PlacemodeManager.getInstance().addBlock(loc.getWorld(),
-                    new BlockData(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), blockType, blockLevel));
-            player.sendActionBar("§aЛакиблок сохраняется по координатам: §e" + loc.getBlockX() + ", " + loc.getBlockY()
-                    + ", " + loc.getBlockZ() + " §bТип: §f" + blockType + " §bУровень: §e" + blockLevel);
-            // Не ставим физически сам блок — только запись точки!
-            event.setCancelled(true);
+
+            java.util.List<BlockData> worldBlocks = PlacemodeManager.getInstance().getBlocksForWorld(player.getWorld());
+
+            if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)
+            {
+                // Установка лакиблока (и запись в worldBlocks, и физически в
+                // мир)
+                BlockData add = new BlockData(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), blockType, blockLevel);
+                // Проверим, есть ли такой уже — не дублируем
+                boolean already = worldBlocks.stream().anyMatch(b -> b.x == add.x && b.y == add.y && b.z == add.z
+                        && b.type.equals(add.type) && b.level == add.level);
+                if (!already)
+                {
+                    worldBlocks.add(add);
+                    // Ставим блок-материал из конфига
+                    org.bukkit.Material mat = org.bukkit.Material.GOLD_BLOCK;
+                    org.bukkit.plugin.Plugin plugin = org.bukkit.Bukkit.getPluginManager().getPlugin("LuckyBlocks");
+                    if (plugin instanceof net.ayronix.luckyblocks.LuckyBlockPlugin lbp)
+                    {
+                        org.bukkit.Material m = lbp.getConfigManager().getLuckyBlockMaterial(blockType);
+                        if (m != null)
+                            mat = m;
+                    }
+                    player.getWorld().getBlockAt(loc).setType(mat);
+                }
+                player.sendActionBar("§aЛакиблок установлен: §e" + loc.getBlockX() + ", " + loc.getBlockY() + ", "
+                        + loc.getBlockZ() + " §bТип: §f" + blockType + " §bУровень: §e" + blockLevel);
+                event.setCancelled(true);
+                return;
+            }
+
+            if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK)
+            {
+                // Поиск и удаление лакиблока по этим координатам
+                BlockData match = null;
+                for (BlockData b : new java.util.ArrayList<>(worldBlocks))
+                {
+                    if (b.x == loc.getBlockX() && b.y == loc.getBlockY() && b.z == loc.getBlockZ()
+                            && b.type.equals(blockType) && b.level == blockLevel)
+                    {
+                        match = b;
+                        break;
+                    }
+                }
+                if (match != null)
+                {
+                    worldBlocks.remove(match);
+                    player.getWorld().getBlockAt(loc).setType(org.bukkit.Material.AIR);
+                    player.sendActionBar("§cЛакиблок удалён с точки: §e" + loc.getBlockX() + ", " + loc.getBlockY()
+                            + ", " + loc.getBlockZ() + " §bТип: §f" + blockType + " §bУровень: §e" + blockLevel);
+                } else
+                {
+                    player.sendActionBar("§cНет такого лакиблока для удаления.");
+                }
+                event.setCancelled(true);
+                return;
+            }
         }
     }
 }

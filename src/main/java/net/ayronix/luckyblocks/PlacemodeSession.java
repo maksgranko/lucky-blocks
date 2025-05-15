@@ -9,6 +9,7 @@ public class PlacemodeSession
     private final UUID uuid;
     private final String playerName; // можно использовать для debug
     private String type;
+    private int typeIndex = 0; // Индекс в списке типов (для смены BLUE_WOOL)
     private int level;
     private int minLevel;
     private int maxLevel;
@@ -36,6 +37,16 @@ public class PlacemodeSession
     public String getType()
     {
         return type;
+    }
+
+    public int getTypeIndex()
+    {
+        return typeIndex;
+    }
+
+    public void setTypeIndex(int idx)
+    {
+        this.typeIndex = idx;
     }
 
     public int getLevel()
