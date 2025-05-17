@@ -67,8 +67,11 @@ public class PlaceBlockEvent implements ICustomEvent
 
         if (luckyCoords != null && luckyCoords.stream().anyMatch(entry -> matchesLocation(placeLoc, entry)))
         {
-            plugin.getLogger().warning("[PlaceBlockEvent] Попытка подменить лакиблок по координате " + placeLoc
-                    + " — операция запрещена!");
+            if (LuckyBlockPlugin.debug)
+            {
+                plugin.getLogger().warning("[PlaceBlockEvent] Попытка подменить лакиблок по координате " + placeLoc
+                        + " — операция запрещена!");
+            }
             return;
         }
         // Если замена разрешена, сразу удалить координату из allowReplaceSet
@@ -109,18 +112,24 @@ public class PlaceBlockEvent implements ICustomEvent
                 boolean wasLuckyBlock = luckyCoords != null && luckyCoords.contains(key);
 
                 String pdcState = wasLuckyBlock ? "В PDC присутствует лакиблок" : "В PDC НЕТ лакиблока";
-                player.sendMessage("§e(Dev) Поставлен блок: " + fMaterial.name() + " на " + fBlock.getX() + ","
-                        + fBlock.getY() + "," + fBlock.getZ() + ", заменено: " + oldType.name() + " | " + pdcState
-                        + " | key=" + key + " | pdc-keys=[" + pdcKeys + "]");
-                plugin.getLogger()
-                        .info("[PlaceBlockEvent] Установлен блок: " + fMaterial.name() + " на " + fBlock.getX() + ","
-                                + fBlock.getY() + "," + fBlock.getZ() + ", заменено: " + oldType.name() + " | "
-                                + pdcState + " | key=" + key + " | pdc-keys=[" + pdcKeys + "]");
+                if (LuckyBlockPlugin.debug)
+                {
+                    player.sendMessage("§e(Dev) Поставлен блок: " + fMaterial.name() + " на " + fBlock.getX() + ","
+                            + fBlock.getY() + "," + fBlock.getZ() + ", заменено: " + oldType.name() + " | " + pdcState
+                            + " | key=" + key + " | pdc-keys=[" + pdcKeys + "]");
+                    plugin.getLogger()
+                            .info("[PlaceBlockEvent] Установлен блок: " + fMaterial.name() + " на " + fBlock.getX()
+                                    + "," + fBlock.getY() + "," + fBlock.getZ() + ", заменено: " + oldType.name()
+                                    + " | " + pdcState + " | key=" + key + " | pdc-keys=[" + pdcKeys + "]");
+                }
             }
         }.runTask(plugin);
 
-        player.sendMessage(
-                "§aПоставлен блок: " + material.name() + " по координатам (" + dx + ", " + dy + ", " + dz + ")");
+        if (LuckyBlockPlugin.debug)
+        {
+            player.sendMessage(
+                    "§aПоставлен блок: " + material.name() + " по координатам (" + dx + ", " + dy + ", " + dz + ")");
+        }
     }
 
     // Сравнение: совпадают ли координаты Location и строки entry из PDC
