@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import net.ayronix.luckyblocks.LuckyBlockPlugin;
+import net.ayronix.luckyblocks.EventChainUtil;
 
 import java.util.UUID;
 
@@ -40,6 +41,8 @@ public class DropItemEvent implements ICustomEvent
             dropItemFromMap(player, location, eventConfig.getValues(false), plugin);
         }
 
+        // Запуск дополнительных команд (execute: ...)
+        net.ayronix.luckyblocks.EventChainUtil.executeChained(player, location, eventConfig, plugin);
     }
 
     // Поддержка логики дропа одного предмета по параметрам

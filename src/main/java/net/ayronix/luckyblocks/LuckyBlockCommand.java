@@ -31,15 +31,7 @@ public class LuckyBlockCommand implements CommandExecutor
         if (args.length == 0 || (args.length == 1 && args[0].equalsIgnoreCase("help")))
         {
             sender.sendMessage(ChatColor.GOLD + "LuckyBlock — команды:");
-            sender.sendMessage(ChatColor.YELLOW + "/" + label + " placemode on" + ChatColor.GRAY
-                    + " — режим расстановки лакиблоков");
-            sender.sendMessage(ChatColor.YELLOW + "/" + label + " placemode off" + ChatColor.GRAY
-                    + " — выключить placemode и вернуть хотбар");
-            sender.sendMessage(ChatColor.YELLOW + "/" + label + " placemode init" + ChatColor.GRAY
-                    + " — инициализировать лакиблоки на карте");
-            sender.sendMessage(ChatColor.YELLOW + "/" + label + " placemode save" + ChatColor.GRAY
-                    + " — сохранить точки лакиблоков карты");
-            sender.sendMessage(ChatColor.YELLOW + "/" + label + " <type> <level> [count]" + ChatColor.GRAY
+            sender.sendMessage(ChatColor.YELLOW + "/" + label + " give <type> <level> [count]" + ChatColor.GRAY
                     + " — получить лакиблок в инвентарь");
             sender.sendMessage(ChatColor.YELLOW + "/" + label + " add chest-table <type> <имя>" + ChatColor.GRAY
                     + " — экспортировать содержимое сундука как таблицу лута для лакиблока");
@@ -52,49 +44,96 @@ public class LuckyBlockCommand implements CommandExecutor
         }
         if (args.length >= 1)
         {
-            // --- Placemode commands ---
-            if (args[0].equalsIgnoreCase("placemode"))
+            // --- LuckyBlock Give Command ---
+            if (args[0].equalsIgnoreCase("give"))
             {
+                if (!sender.hasPermission("luckyblocks.use"))
+                {
+                    sender.sendMessage(ChatColor.RED + "Нет прав для /" + label + " give");
+                    return true;
+                }
                 if (!(sender instanceof Player player))
                 {
-                    sender.sendMessage(ChatColor.RED + "Только игрок может использовать placemode.");
+                    sender.sendMessage(ChatColor.RED + "Только игрок может выполнить команду.");
                     return true;
                 }
-                if (!player.hasPermission("luckyblocks.placemode"))
+                if (args.length < 3)
                 {
-                    player.sendMessage(ChatColor.RED + "Нет прав для /" + label + " placemode.");
+                    player.sendMessage(ChatColor.YELLOW + "Использование: /" + label + " give <type> <level> [count]");
                     return true;
                 }
-                if (args.length == 2 && args[1].equalsIgnoreCase("on"))
+
+                String type = args[1].toLowerCase();
+                Set<String> availableTypes = configManager.getAvailableTypes();
+                if (!availableTypes.contains(type))
                 {
-                    // Включить режим placemode, выдача hotbar инициализация
-                    // сессии
-                    PlacemodeManager.getInstance().enableFor(player);
+                    player.sendMessage(ChatColor.RED + "Тип не найден: " + type);
+                    if (!availableTypes.isEmpty())
+                    {
+                        player.sendMessage(ChatColor.YELLOW + "Доступные типы: " + String.join(", ", availableTypes));
+                    }
                     return true;
                 }
-                if (args.length == 2 && args[1].equalsIgnoreCase("off"))
+
+                int level;
+                int count = 1;
+                try
                 {
-                    // Отключить placemode, вернуть предметы
-                    PlacemodeManager.getInstance().disableFor(player);
-                    return true;
-                }
-                if (args.length == 2 && args[1].equalsIgnoreCase("init"))
+                    level = Integer.parseInt(args[2]);
+                    if (args.length >= 4)
+                    {
+                        count = Integer.parseInt(args[3]);
+                        if (count <= 0)
+                        {
+                            player.sendMessage(ChatColor.RED + "[count] должен быть положительным числом!");
+                            return true;
+                        }
+                    }
+                } catch (NumberFormatException e)
                 {
-                    // Установить лакиблоки в сохранённых местах, загрузить из
-                    // мира
-                    PlacemodeManager.getInstance().loadBlocks(player.getWorld());
-                    PlacemodeManager.getInstance().initBlocks(player.getWorld());
-                    player.sendMessage(ChatColor.AQUA + "[LuckyBlock] Инициализация лакиблоков из карты завершена.");
+                    player.sendMessage(ChatColor.RED + "<level> и [count] должны быть числами!");
                     return true;
                 }
-                if (args.length == 2 && args[1].equalsIgnoreCase("save"))
+
+                int minLevel = configManager.getMinLevel(type);
+                int maxLevel = configManager.getMaxLevel(type);
+
+                if (!configManager.isValidLevel(type, level) || level < minLevel || level > maxLevel)
                 {
-                    // Сохранить точки лакиблоков карты
-                    PlacemodeManager.getInstance().saveBlocks(player.getWorld());
-                    player.sendMessage(ChatColor.GREEN + "[LuckyBlock] Позиции лакиблоков для карты сохранены.");
+                    player.sendMessage(ChatColor.RED + "Уровень " + level + " невалиден для типа '" + type + "'.");
+                    player.sendMessage(ChatColor.YELLOW + "Доступные уровни: от " + minLevel + " до " + maxLevel + ".");
                     return true;
                 }
-                player.sendMessage(ChatColor.YELLOW + "Использование: /" + label + " placemode <on|off|init|save>");
+
+                Material material = configManager.getLuckyBlockMaterial(type);
+                int customModelData = configManager.getLuckyBlockCustomModelData(type);
+                String displayName = configManager.getDisplayName(type, level);
+
+                ItemStack luckyBlockItem = new ItemStack(material, 1);
+                ItemMeta meta = luckyBlockItem.getItemMeta();
+
+                if (meta != null)
+                {
+                    meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', displayName));
+                    if (customModelData > 0)
+                    {
+                        meta.setCustomModelData(customModelData);
+                    }
+                    PersistentDataContainer pdc = meta.getPersistentDataContainer();
+                    pdc.set(LuckyBlockPlugin.LUCKY_BLOCK_KEY, PersistentDataType.BYTE, (byte) 1);
+                    pdc.set(LuckyBlockPlugin.LUCKY_BLOCK_TYPE_KEY, PersistentDataType.STRING, type);
+                    pdc.set(LuckyBlockPlugin.LUCKY_BLOCK_LEVEL_KEY, PersistentDataType.INTEGER, level);
+                    luckyBlockItem.setItemMeta(meta);
+                }
+
+                for (int i = 0; i < count; i++)
+                {
+                    player.getInventory().addItem(luckyBlockItem.clone());
+                }
+
+                player.sendMessage(
+                        ChatColor.GREEN + "Вам выдан: " + ChatColor.translateAlternateColorCodes('&', displayName)
+                                + ChatColor.GREEN + " (x" + count + ")");
                 return true;
             }
             if (args[0].equalsIgnoreCase("reload"))
@@ -258,92 +297,6 @@ public class LuckyBlockCommand implements CommandExecutor
             }
         }
 
-        if (!sender.hasPermission("luckyblocks.use"))
-        {
-            sender.sendMessage(ChatColor.RED + "Нет прав для /" + label);
-            return true;
-        }
-        if (!(sender instanceof Player player))
-        {
-            sender.sendMessage(ChatColor.RED + "Только игрок может выполнить команду.");
-            return true;
-        }
-        if (args.length < 2)
-        {
-            player.sendMessage(ChatColor.YELLOW + "Использование: /" + label + " <type> <level> [count]");
-            return true;
-        }
-
-        String type = args[0].toLowerCase();
-        Set<String> availableTypes = configManager.getAvailableTypes();
-        if (!availableTypes.contains(type))
-        {
-            player.sendMessage(ChatColor.RED + "Тип не найден: " + type);
-            if (!availableTypes.isEmpty())
-            {
-                player.sendMessage(ChatColor.YELLOW + "Доступные типы: " + String.join(", ", availableTypes));
-            }
-            return true;
-        }
-
-        int level;
-        int count = 1;
-        try
-        {
-            level = Integer.parseInt(args[1]);
-            if (args.length >= 3)
-            {
-                count = Integer.parseInt(args[2]);
-                if (count <= 0)
-                {
-                    player.sendMessage(ChatColor.RED + "[count] должен быть положительным числом!");
-                    return true;
-                }
-            }
-        } catch (NumberFormatException e)
-        {
-            player.sendMessage(ChatColor.RED + "<level> и [count] должны быть числами!");
-            return true;
-        }
-
-        int minLevel = configManager.getMinLevel(type);
-        int maxLevel = configManager.getMaxLevel(type);
-
-        if (!configManager.isValidLevel(type, level) || level < minLevel || level > maxLevel)
-        {
-            player.sendMessage(ChatColor.RED + "Уровень " + level + " невалиден для типа '" + type + "'.");
-            player.sendMessage(ChatColor.YELLOW + "Доступные уровни: от " + minLevel + " до " + maxLevel + ".");
-            return true;
-        }
-
-        Material material = configManager.getLuckyBlockMaterial(type);
-        int customModelData = configManager.getLuckyBlockCustomModelData(type);
-        String displayName = configManager.getDisplayName(type, level);
-
-        ItemStack luckyBlockItem = new ItemStack(material, 1);
-        ItemMeta meta = luckyBlockItem.getItemMeta();
-
-        if (meta != null)
-        {
-            meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', displayName));
-            if (customModelData > 0)
-            {
-                meta.setCustomModelData(customModelData);
-            }
-            PersistentDataContainer pdc = meta.getPersistentDataContainer();
-            pdc.set(LuckyBlockPlugin.LUCKY_BLOCK_KEY, PersistentDataType.BYTE, (byte) 1);
-            pdc.set(LuckyBlockPlugin.LUCKY_BLOCK_TYPE_KEY, PersistentDataType.STRING, type);
-            pdc.set(LuckyBlockPlugin.LUCKY_BLOCK_LEVEL_KEY, PersistentDataType.INTEGER, level);
-            luckyBlockItem.setItemMeta(meta);
-        }
-
-        for (int i = 0; i < count; i++)
-        {
-            player.getInventory().addItem(luckyBlockItem.clone());
-        }
-
-        player.sendMessage(ChatColor.GREEN + "Вам выдан: " + ChatColor.translateAlternateColorCodes('&', displayName)
-                + ChatColor.GREEN + " (x" + count + ")");
         return true;
     }
 }

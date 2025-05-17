@@ -9,6 +9,23 @@ import net.ayronix.luckyblocks.LuckyBlockPlugin;
 
 public class CommandExecEvent implements ICustomEvent
 {
+    /**
+     * Статическая обработка одиночной команды — от сервера, с подстановкой
+     * %player%
+     */
+    public static void handleAsChain(Player player, Location location, String command, LuckyBlockPlugin plugin)
+    {
+        String cmd = command.replace("%player%", player.getName()).replace("@p", player.getName())
+                .replace("%x%", String.valueOf(location.getBlockX()))
+                .replace("%y%", String.valueOf(location.getBlockY()))
+                .replace("%z%", String.valueOf(location.getBlockZ())).replace("~", String.valueOf(location.getBlockX()))
+                .replace("~~", String.valueOf(location.getBlockY()))
+                .replace("~~~", String.valueOf(location.getBlockZ()));
+        if (cmd.startsWith("/"))
+            cmd = cmd.substring(1);
+        plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), cmd);
+    }
+
     @Override
     public void execute(Player player, Location location, ConfigurationSection eventConfig, LuckyBlockPlugin plugin)
     {

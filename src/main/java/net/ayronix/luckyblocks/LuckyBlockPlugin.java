@@ -89,7 +89,6 @@ public final class LuckyBlockPlugin extends JavaPlugin
         getServer().getPluginManager().registerEvents(new BlockBreakListener(this), this);
         getServer().getPluginManager().registerEvents(new ExplosionListener(this), this);
         getServer().getPluginManager().registerEvents(new BlockProtectionListener(this), this);
-        getServer().getPluginManager().registerEvents(new PlacemodeListener(), this);
         PluginCommand cmd = getCommand("luckyblock");
         if (cmd != null)
         {

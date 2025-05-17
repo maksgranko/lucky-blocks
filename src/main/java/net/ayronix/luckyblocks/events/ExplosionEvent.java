@@ -15,5 +15,8 @@ public class ExplosionEvent implements ICustomEvent
         // Теперь можно задать мощность взрыва через параметр "power" (float)
         float power = (float) eventConfig.getDouble("power", 2.5F);
         location.getWorld().createExplosion(location, power);
+
+        // Запуск дополнительных команд (execute: ...)
+        net.ayronix.luckyblocks.EventChainUtil.executeChained(player, location, eventConfig, plugin);
     }
 }

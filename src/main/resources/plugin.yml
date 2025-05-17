@@ -5,7 +5,7 @@ api-version: '1.21'
 commands:
   luckyblock:
     description: Выдать лаки-блоки игроку
-    usage: /<command> <type> <level> [count]
+    usage: /<command> give <type> <level> [count]
 permissions:
   luckyblocks.use:
     description: Разрешает использовать команду /luckyblock

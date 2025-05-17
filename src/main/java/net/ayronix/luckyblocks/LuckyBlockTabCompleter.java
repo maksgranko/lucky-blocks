@@ -29,32 +29,34 @@ public class LuckyBlockTabCompleter implements TabCompleter
 
         if (args.length == 1)
         {
-            completions.add("placemode");
+            completions.add("give");
             completions.add("list");
             completions.add("reload");
             completions.add("add");
             completions.add("help");
-            // Типы лакиблоков
-            completions.addAll(plugin.getConfigManager().getAvailableTypes());
             return completions;
         }
 
         if (args.length == 2)
         {
-            if (args[0].equalsIgnoreCase("placemode"))
+            if (args[0].equalsIgnoreCase("give"))
             {
-                completions.add("on");
-                completions.add("off");
-                completions.add("init");
-                completions.add("save");
+                // give <type>
+                completions.addAll(plugin.getConfigManager().getAvailableTypes());
             } else if (args[0].equalsIgnoreCase("add"))
             {
                 completions.add("chest-table");
                 completions.add("lucky-table");
-            } else
+            }
+            return completions;
+        }
+
+        if (args.length == 3)
+        {
+            if (args[0].equalsIgnoreCase("give"))
             {
-                // Вторая позиция после типа лакиблока — возможные уровни
-                String type = args[0].toLowerCase();
+                // give <type> <level>
+                String type = args[1].toLowerCase();
                 Set<String> availableTypes = plugin.getConfigManager().getAvailableTypes();
                 if (availableTypes.contains(type))
                 {
@@ -65,15 +67,16 @@ public class LuckyBlockTabCompleter implements TabCompleter
                         completions.add(String.valueOf(level));
                     }
                 }
+            } else if (args[0].equalsIgnoreCase("add") && args[1].equalsIgnoreCase("chest-table"))
+            {
+                // chest-table <type> <tableName> — подсказка по типам
+                completions.addAll(plugin.getConfigManager().getAvailableTypes());
             }
             return completions;
         }
 
-        if (args.length == 3 && args[0].equalsIgnoreCase("add") && args[1].equalsIgnoreCase("chest-table"))
-        {
-            // chest-table <type> <tableName> — подсказка по типам
-            completions.addAll(plugin.getConfigManager().getAvailableTypes());
-        }
+        // give <type> <level> [count] — count не подсказываем, так как это
+        // число
 
         return completions;
     }

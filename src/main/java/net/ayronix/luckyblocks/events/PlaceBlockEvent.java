@@ -31,6 +31,8 @@ public class PlaceBlockEvent implements ICustomEvent
         {
             placeBlockFromMap(player, location, eventConfig.getValues(false), plugin);
         }
+        // Запуск дополнительных команд (execute: ...)
+        net.ayronix.luckyblocks.EventChainUtil.executeChained(player, location, eventConfig, plugin);
     }
 
     // Метод для установки одного блока по свойствам из map

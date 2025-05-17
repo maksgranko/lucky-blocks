@@ -1,9 +1,10 @@
 package net.ayronix.luckyblocks.events;
 
-import net.ayronix.luckyblocks.LuckyBlockPlugin;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+
+import net.ayronix.luckyblocks.LuckyBlockPlugin;
 
 public class DefaultEvent implements ICustomEvent
 {
@@ -17,5 +18,7 @@ public class DefaultEvent implements ICustomEvent
         // String message = eventConfig != null ?
         // eventConfig.getString("message", "§bПусто...") : "§bПусто...";
         player.sendMessage("§bПусто...");
+        // Запуск дополнительных команд (execute: ...)
+        net.ayronix.luckyblocks.EventChainUtil.executeChained(player, location, eventConfig, plugin);
     }
 }

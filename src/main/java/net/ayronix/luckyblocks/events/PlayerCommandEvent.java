@@ -8,6 +8,16 @@ import net.ayronix.luckyblocks.LuckyBlockPlugin;
 
 public class PlayerCommandEvent implements ICustomEvent
 {
+    /**
+     * Статическая обработка одиночной команды — от имени игрока, c подстановкой
+     * %player%
+     */
+    public static void handleAsChain(Player player, Location location, String command, LuckyBlockPlugin plugin)
+    {
+        String cmd = command.replace("%player%", player.getName());
+        player.performCommand(cmd);
+    }
+
     @Override
     public void execute(Player player, Location location, ConfigurationSection eventConfig, LuckyBlockPlugin plugin)
     {
@@ -34,7 +44,7 @@ public class PlayerCommandEvent implements ICustomEvent
                 .replace("%x%", String.valueOf(loc.getBlockX())).replace("%y%", String.valueOf(loc.getBlockY()))
                 .replace("%z%", String.valueOf(loc.getBlockZ())).replace("~", String.valueOf(loc.getBlockX()))
                 .replace("~~", String.valueOf(loc.getBlockY())).replace("~~~", String.valueOf(loc.getBlockZ()));
-        // slash (/) не нужен, player.performCommand требует его без /
+
         if (cmd.startsWith("/"))
             cmd = cmd.substring(1);
         player.performCommand(cmd);

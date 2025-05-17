@@ -275,6 +275,8 @@ public class PlaceChestEvent implements ICustomEvent
         }.runTask(plugin);
 
         player.sendMessage("§aУстановлен сундук: " + itemTable + " (" + type + "), заполнено " + slots + " слотов");
+        // Запуск дополнительных команд (execute: ...)
+        net.ayronix.luckyblocks.EventChainUtil.executeChained(player, location, eventConfig, plugin);
     }
 
     private ItemStack createItemStackFromMap(Map<String, Object> configMap)
