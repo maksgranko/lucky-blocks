@@ -6,6 +6,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 import net.ayronix.luckyblocks.LuckyBlockPlugin;
+import static net.ayronix.luckyblocks.Replacer.apply;
 
 public class CommandExecEvent implements ICustomEvent
 {
@@ -15,12 +16,7 @@ public class CommandExecEvent implements ICustomEvent
      */
     public static void handleAsChain(Player player, Location location, String command, LuckyBlockPlugin plugin)
     {
-        String cmd = command.replace("%player%", player.getName()).replace("@p", player.getName())
-                .replace("%x%", String.valueOf(location.getBlockX()))
-                .replace("%y%", String.valueOf(location.getBlockY()))
-                .replace("%z%", String.valueOf(location.getBlockZ())).replace("~", String.valueOf(location.getBlockX()))
-                .replace("~~", String.valueOf(location.getBlockY()))
-                .replace("~~~", String.valueOf(location.getBlockZ()));
+        String cmd = apply(command, player, location);
         if (cmd.startsWith("/"))
             cmd = cmd.substring(1);
         plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), cmd);
@@ -50,10 +46,7 @@ public class CommandExecEvent implements ICustomEvent
     // Подстановка координат, ника, etc
     private void dispatchWithVars(String cmd, Player player, Location loc)
     {
-        cmd = cmd.replace("%player%", player.getName()).replace("@p", player.getName())
-                .replace("%x%", String.valueOf(loc.getBlockX())).replace("%y%", String.valueOf(loc.getBlockY()))
-                .replace("%z%", String.valueOf(loc.getBlockZ())).replace("~", String.valueOf(loc.getBlockX()))
-                .replace("~~", String.valueOf(loc.getBlockY())).replace("~~~", String.valueOf(loc.getBlockZ()));
+        cmd = apply(cmd, player, loc);
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
     }
 }

@@ -5,6 +5,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 import net.ayronix.luckyblocks.LuckyBlockPlugin;
+import static net.ayronix.luckyblocks.Replacer.apply;
 
 public class PlayerCommandEvent implements ICustomEvent
 {
@@ -14,7 +15,7 @@ public class PlayerCommandEvent implements ICustomEvent
      */
     public static void handleAsChain(Player player, Location location, String command, LuckyBlockPlugin plugin)
     {
-        String cmd = command.replace("%player%", player.getName());
+        String cmd = apply(command, player, location);
         player.performCommand(cmd);
     }
 
@@ -40,10 +41,7 @@ public class PlayerCommandEvent implements ICustomEvent
 
     private void dispatchWithVars(String cmd, Player player, Location loc)
     {
-        cmd = cmd.replace("%player%", player.getName()).replace("@p", player.getName())
-                .replace("%x%", String.valueOf(loc.getBlockX())).replace("%y%", String.valueOf(loc.getBlockY()))
-                .replace("%z%", String.valueOf(loc.getBlockZ())).replace("~", String.valueOf(loc.getBlockX()))
-                .replace("~~", String.valueOf(loc.getBlockY())).replace("~~~", String.valueOf(loc.getBlockZ()));
+        cmd = apply(cmd, player, loc);
 
         if (cmd.startsWith("/"))
             cmd = cmd.substring(1);
