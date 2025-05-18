@@ -19,18 +19,12 @@ types:
                 - item: WOODEN_SWORD
                   amount: 1
             - enabled: true
-              weight: 45
+              weight: 90
               items:
                 - item: WOODEN_SHOVEL
                   amount: 1
-            - enabled: true
-              weight: 45
-              items:
                 - item: WOODEN_PICKAXE
                   amount: 1
-            - enabled: true
-              weight: 45
-              items:
                 - item: WOODEN_AXE
                   amount: 1
             - enabled: true
@@ -59,18 +53,12 @@ types:
                 - item: STONE_SWORD
                   amount: 1
             - enabled: true
-              weight: 30
+              weight: 60
               items:
                 - item: STONE_SHOVEL
                   amount: 1
-            - enabled: true
-              weight: 30
-              items:
                 - item: STONE_PICKAXE
                   amount: 1
-            - enabled: true
-              weight: 30
-              items:
                 - item: STONE_AXE
                   amount: 1
             - enabled: true
@@ -99,18 +87,12 @@ types:
                 - item: GOLDEN_SWORD
                   amount: 1
             - enabled: true
-              weight: 10
+              weight: 20
               items:
                 - item: GOLDEN_SHOVEL
                   amount: 1
-            - enabled: true
-              weight: 10
-              items:
                 - item: GOLDEN_PICKAXE
                   amount: 1
-            - enabled: true
-              weight: 10
-              items:
                 - item: GOLDEN_AXE
                   amount: 1
             - enabled: true
@@ -162,7 +144,7 @@ types:
                   amount: 1
           HEAL:
             enabled: true
-            weight: 174
+            weight: 80
             amount: 5
             effects:
               - REGENERATION
@@ -181,7 +163,7 @@ types:
             weight: 81
             effect: ABSORPTION
             amplifier: 2
-            duration: 120
+            duration: 30
           COMMAND_EXEC:
             enabled: true
             weight: 52
@@ -262,7 +244,7 @@ types:
                   amount: 1
           HEAL:
             enabled: true
-            weight: 70
+            weight: 35
             amount: 10
             effects:
               - REGENERATION
@@ -272,11 +254,16 @@ types:
             weight: 33
             effect: SPEED
             amplifier: 1
-            duration: 240
+            duration: 30
           PLACE_CHEST:
             enabled: true
-            weight: 65
+            weight: 120
             item-table: positive_loot_1
+            relative-coords: { x: 0, y: 0, z: 0 }
+          PLACE_CHEST:
+            enabled: true
+            weight: 50
+            item-table: random
             relative-coords: { x: 0, y: 0, z: 0 }
           SUMMON:
             enabled: true
@@ -339,7 +326,7 @@ types:
             - enabled: true
               weight: 12
               items:
-                - item: ENCHANTED_GOLDEN_APPLE
+                - item: GOLDEN_APPLE
                   amount: 1
             - enabled: true
               weight: 16
@@ -363,7 +350,7 @@ types:
                   amount: 2
           HEAL:
             enabled: true
-            weight: 40
+            weight: 18
             amount: 15
             effects:
               - REGENERATION
@@ -371,8 +358,13 @@ types:
               - FIRE_RESISTANCE
           PLACE_CHEST:
             enabled: true
-            weight: 58
+            weight: 95
             item-table: positive_loot_2
+            relative-coords: { x: 0, y: 0, z: 0 }
+          PLACE_CHEST:
+            enabled: true
+            weight: 40
+            item-table: random
             relative-coords: { x: 0, y: 0, z: 0 }
           SUMMON:
             enabled: true
@@ -493,7 +485,7 @@ types:
             enabled: true
             weight: 19
             command: "summon zombie"
-          PLACE_LAVA:
+          PLACE_BLOCK:
             enabled: true
             weight: 22
             blocks:
@@ -662,7 +654,7 @@ types:
             weight: 14
             effect: GLOWING
             amplifier: 1
-            duration: 150
+            duration: 30
           SUMMON:
             enabled: true
             weight: 10
@@ -706,7 +698,7 @@ types:
             weight: 7
             effect: LEVITATION
             amplifier: 1
-            duration: 70
+            duration: 20
           SUMMON:
             enabled: true
             weight: 7
