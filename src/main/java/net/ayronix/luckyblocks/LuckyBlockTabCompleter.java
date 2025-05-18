@@ -80,9 +80,22 @@ public class LuckyBlockTabCompleter implements TabCompleter
             return completions;
         }
 
-        // give <type> <level> [count] — count не подсказываем, так как это
-        // число
-
+        // give <type> <level> [count] [player/@s/@p/@a/*]
+        if (args.length == 4 || args.length == 5)
+        {
+            if (args[0].equalsIgnoreCase("give"))
+            {
+                // give <type> <level> <count> [player]
+                completions.add("@s");
+                completions.add("@p");
+                completions.add("@a");
+                completions.add("*");
+                for (org.bukkit.entity.Player player : org.bukkit.Bukkit.getOnlinePlayers())
+                {
+                    completions.add(player.getName());
+                }
+            }
+        }
         return completions;
     }
 }

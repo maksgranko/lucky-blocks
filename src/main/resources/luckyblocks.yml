@@ -14,11 +14,6 @@ types:
             delay: 2
           DROP_ITEM:
             - enabled: true
-              weight: 45
-              items:
-                - item: WOODEN_SWORD
-                  amount: 1
-            - enabled: true
               weight: 90
               items:
                 - item: WOODEN_SHOVEL
@@ -27,6 +22,25 @@ types:
                   amount: 1
                 - item: WOODEN_AXE
                   amount: 1
+            - enabled: true
+              weight: 60
+              items:
+                - item: STONE_SHOVEL
+                  amount: 1
+                - item: STONE_PICKAXE
+                  amount: 1
+                - item: STONE_AXE
+                  amount: 1
+            - enabled: true
+              weight: 20
+              items:
+                - item: GOLDEN_SHOVEL
+                  amount: 1
+                - item: GOLDEN_PICKAXE
+                  amount: 1
+                - item: GOLDEN_AXE
+                  amount: 1
+            # Остальные DROP_ITEM награды без инструментов (броня, материалы) — без изменений
             - enabled: true
               weight: 30
               items:
@@ -53,15 +67,6 @@ types:
                 - item: STONE_SWORD
                   amount: 1
             - enabled: true
-              weight: 60
-              items:
-                - item: STONE_SHOVEL
-                  amount: 1
-                - item: STONE_PICKAXE
-                  amount: 1
-                - item: STONE_AXE
-                  amount: 1
-            - enabled: true
               weight: 16
               items:
                 - item: STONE_HELMET
@@ -85,15 +90,6 @@ types:
               weight: 10
               items:
                 - item: GOLDEN_SWORD
-                  amount: 1
-            - enabled: true
-              weight: 20
-              items:
-                - item: GOLDEN_SHOVEL
-                  amount: 1
-                - item: GOLDEN_PICKAXE
-                  amount: 1
-                - item: GOLDEN_AXE
                   amount: 1
             - enabled: true
               weight: 7
@@ -146,8 +142,7 @@ types:
             enabled: true
             weight: 80
             amount: 5
-            effects:
-              - REGENERATION
+            heal_percent: 20
           PLACE_BLOCK:
             enabled: true
             weight: 131
@@ -181,25 +176,15 @@ types:
             delay: 2
           DROP_ITEM:
             - enabled: true
-              weight: 38
-              items:
-                - item: IRON_SWORD
-                  amount: 1
-            - enabled: true
-              weight: 32
+              weight: 96
               items:
                 - item: IRON_SHOVEL
                   amount: 1
-            - enabled: true
-              weight: 32
-              items:
                 - item: IRON_PICKAXE
                   amount: 1
-            - enabled: true
-              weight: 32
-              items:
                 - item: IRON_AXE
                   amount: 1
+            # Остальные DROP_ITEM награды без инструментов (броня, материалы) — без изменений
             - enabled: true
               weight: 20
               items:
@@ -246,9 +231,7 @@ types:
             enabled: true
             weight: 35
             amount: 10
-            effects:
-              - REGENERATION
-              - ABSORPTION
+            heal_percent: 20
           GIVE_EFFECT:
             enabled: true
             weight: 33
@@ -284,24 +267,19 @@ types:
             delay: 2
           DROP_ITEM:
             - enabled: true
+              weight: 24
+              items:
+                - item: DIAMOND_SHOVEL
+                  amount: 1
+                - item: DIAMOND_PICKAXE
+                  amount: 1
+                - item: DIAMOND_AXE
+                  amount: 1
+            # Остальные DROP_ITEM награды без изменений
+            - enabled: true
               weight: 10
               items:
                 - item: DIAMOND_SWORD
-                  amount: 1
-            - enabled: true
-              weight: 8
-              items:
-                - item: DIAMOND_PICKAXE
-                  amount: 1
-            - enabled: true
-              weight: 8
-              items:
-                - item: DIAMOND_AXE
-                  amount: 1
-            - enabled: true
-              weight: 7
-              items:
-                - item: DIAMOND_SHOVEL
                   amount: 1
             - enabled: true
               weight: 7
@@ -352,10 +330,7 @@ types:
             enabled: true
             weight: 18
             amount: 15
-            effects:
-              - REGENERATION
-              - ABSORPTION
-              - FIRE_RESISTANCE
+            heal_percent: 20
           PLACE_CHEST:
             enabled: true
             weight: 95
@@ -704,3 +679,4 @@ types:
             weight: 7
             entity: "cow"
             count: 3
+

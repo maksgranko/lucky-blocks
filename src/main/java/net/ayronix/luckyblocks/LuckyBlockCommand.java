@@ -86,14 +86,97 @@ public class LuckyBlockCommand implements CommandExecutor
                     sender.sendMessage(ChatColor.RED + "Нет прав для /" + label + " give");
                     return true;
                 }
-                if (!(sender instanceof Player player))
+
+                // Если передан player_name (последний аргумент)
+                java.util.List<Player> targetPlayers = new java.util.ArrayList<>();
+                int argShift = 0;
+
+                if (args.length >= 5)
                 {
-                    sender.sendMessage(ChatColor.RED + "Только игрок может выполнить команду.");
+                    String playerName = args[args.length - 1];
+                    if (playerName.equalsIgnoreCase("@a") || playerName.equals("*"))
+                    {
+                        if (!sender.hasPermission("luckyblocks.give"))
+                        {
+                            sender.sendMessage(ChatColor.RED + "Нет прав на выдачу лакиблоков другим игрокам.");
+                            return true;
+                        }
+                        targetPlayers.addAll(org.bukkit.Bukkit.getOnlinePlayers());
+                        argShift = 1;
+                    } else if (playerName.equalsIgnoreCase("@s"))
+                    {
+                        if (sender instanceof Player player)
+                        {
+                            targetPlayers.add(player);
+                            argShift = 1;
+                        } else
+                        {
+                            sender.sendMessage(ChatColor.RED + "Только игрок может использовать @s.");
+                            return true;
+                        }
+                    } else if (playerName.equalsIgnoreCase("@p"))
+                    {
+                        if (!(sender instanceof Player senderPlayer))
+                        {
+                            sender.sendMessage(ChatColor.RED + "Только игрок может использовать @p.");
+                            return true;
+                        }
+                        Player nearest = null;
+                        double minDist = Double.MAX_VALUE;
+                        org.bukkit.Location loc = senderPlayer.getLocation();
+                        for (Player p : org.bukkit.Bukkit.getOnlinePlayers())
+                        {
+                            if (p == senderPlayer)
+                                continue;
+                            double dist = loc.getWorld().equals(p.getWorld()) ? loc.distanceSquared(p.getLocation())
+                                    : Double.MAX_VALUE;
+                            if (dist < minDist)
+                            {
+                                minDist = dist;
+                                nearest = p;
+                            }
+                        }
+                        if (nearest == null)
+                        {
+                            sender.sendMessage(ChatColor.RED + "Не найден ни один другой игрок для @p.");
+                            return true;
+                        }
+                        if (!sender.hasPermission("luckyblocks.give"))
+                        {
+                            sender.sendMessage(ChatColor.RED + "Нет прав на выдачу лакиблоков другим игрокам.");
+                            return true;
+                        }
+                        targetPlayers.add(nearest);
+                        argShift = 1;
+                    } else
+                    {
+                        Player found = org.bukkit.Bukkit.getPlayerExact(playerName);
+                        if (found == null)
+                        {
+                            sender.sendMessage(ChatColor.RED + "Не удалось найти игрока: " + playerName);
+                            return true;
+                        }
+                        if (!sender.equals(found) && !sender.hasPermission("luckyblocks.give"))
+                        {
+                            sender.sendMessage(ChatColor.RED + "Нет прав на выдачу лакиблоков другим игрокам.");
+                            return true;
+                        }
+                        targetPlayers.add(found);
+                        argShift = 1;
+                    }
+                } else if (sender instanceof Player player)
+                {
+                    targetPlayers.add(player);
+                } else
+                {
+                    sender.sendMessage(ChatColor.RED + "Только игрок или команда с указанием игрока!");
                     return true;
                 }
-                if (args.length < 3)
+
+                if (args.length < 3 + argShift)
                 {
-                    player.sendMessage(ChatColor.YELLOW + "Использование: /" + label + " give <type> <level> [count]");
+                    sender.sendMessage(ChatColor.YELLOW + "Использование: /" + label
+                            + " give <type> <level> [count] [player/@p/@a/*]");
                     return true;
                 }
 
@@ -101,10 +184,10 @@ public class LuckyBlockCommand implements CommandExecutor
                 Set<String> availableTypes = configManager.getAvailableTypes();
                 if (!availableTypes.contains(type))
                 {
-                    player.sendMessage(ChatColor.RED + "Тип не найден: " + type);
+                    sender.sendMessage(ChatColor.RED + "Тип не найден: " + type);
                     if (!availableTypes.isEmpty())
                     {
-                        player.sendMessage(ChatColor.YELLOW + "Доступные типы: " + String.join(", ", availableTypes));
+                        sender.sendMessage(ChatColor.YELLOW + "Доступные типы: " + String.join(", ", availableTypes));
                     }
                     return true;
                 }
@@ -114,18 +197,18 @@ public class LuckyBlockCommand implements CommandExecutor
                 try
                 {
                     level = Integer.parseInt(args[2]);
-                    if (args.length >= 4)
+                    if (args.length >= 4 + argShift)
                     {
                         count = Integer.parseInt(args[3]);
                         if (count <= 0)
                         {
-                            player.sendMessage(ChatColor.RED + "[count] должен быть положительным числом!");
+                            sender.sendMessage(ChatColor.RED + "[count] должен быть положительным числом!");
                             return true;
                         }
                     }
                 } catch (NumberFormatException e)
                 {
-                    player.sendMessage(ChatColor.RED + "<level> и [count] должны быть числами!");
+                    sender.sendMessage(ChatColor.RED + "<level> и [count] должны быть числами!");
                     return true;
                 }
 
@@ -134,8 +217,8 @@ public class LuckyBlockCommand implements CommandExecutor
 
                 if (!configManager.isValidLevel(type, level) || level < minLevel || level > maxLevel)
                 {
-                    player.sendMessage(ChatColor.RED + "Уровень " + level + " невалиден для типа '" + type + "'.");
-                    player.sendMessage(ChatColor.YELLOW + "Доступные уровни: от " + minLevel + " до " + maxLevel + ".");
+                    sender.sendMessage(ChatColor.RED + "Уровень " + level + " невалиден для типа '" + type + "'.");
+                    sender.sendMessage(ChatColor.YELLOW + "Доступные уровни: от " + minLevel + " до " + maxLevel + ".");
                     return true;
                 }
 
@@ -160,14 +243,38 @@ public class LuckyBlockCommand implements CommandExecutor
                     luckyBlockItem.setItemMeta(meta);
                 }
 
-                for (int i = 0; i < count; i++)
+                for (Player target : targetPlayers)
                 {
-                    player.getInventory().addItem(luckyBlockItem.clone());
-                }
+                    for (int i = 0; i < count; i++)
+                    {
+                        target.getInventory().addItem(luckyBlockItem.clone());
+                    }
 
-                player.sendMessage(
-                        ChatColor.GREEN + "Вам выдан: " + ChatColor.translateAlternateColorCodes('&', displayName)
-                                + ChatColor.GREEN + " (x" + count + ")");
+                    if (sender != target)
+                    {
+                        target.sendMessage(ChatColor.GREEN + "Вам выдан: "
+                                + ChatColor.translateAlternateColorCodes('&', displayName) + ChatColor.GREEN + " (x"
+                                + count + ") от " + sender.getName());
+                    }
+                }
+                // Сообщение отправителю
+                if (targetPlayers.size() == 1 && sender != targetPlayers.get(0))
+                {
+                    sender.sendMessage(ChatColor.GREEN + "Вы выдали игроку " + targetPlayers.get(0).getName() + ": "
+                            + ChatColor.translateAlternateColorCodes('&', displayName) + ChatColor.GREEN + " (x" + count
+                            + ")");
+                } else if (targetPlayers.size() > 1)
+                {
+                    sender.sendMessage(ChatColor.GREEN + "Вы выдали лакиблоки всем онлайн-игрокам: "
+                            + ChatColor.translateAlternateColorCodes('&', displayName) + ChatColor.GREEN + " (x" + count
+                            + " каждому)");
+                } else if (targetPlayers.size() == 1)
+                {
+                    targetPlayers.get(0)
+                            .sendMessage(ChatColor.GREEN + "Вам выдан: "
+                                    + ChatColor.translateAlternateColorCodes('&', displayName) + ChatColor.GREEN + " (x"
+                                    + count + ")");
+                }
                 return true;
             }
             if (args[0].equalsIgnoreCase("reload"))
