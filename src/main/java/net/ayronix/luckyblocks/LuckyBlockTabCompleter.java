@@ -33,6 +33,7 @@ public class LuckyBlockTabCompleter implements TabCompleter
             completions.add("list");
             completions.add("reload");
             completions.add("add");
+            completions.add("debug");
             completions.add("help");
             return completions;
         }
@@ -47,6 +48,10 @@ public class LuckyBlockTabCompleter implements TabCompleter
             {
                 completions.add("chest-table");
                 completions.add("lucky-table");
+            } else if (args[0].equalsIgnoreCase("debug"))
+            {
+                completions.add("on");
+                completions.add("off");
             }
             return completions;
         }

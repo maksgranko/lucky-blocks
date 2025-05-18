@@ -153,8 +153,9 @@ public class ConfigManager
         }
         visited.add(type);
 
-        plugin.getLogger()
-                .info("getEffectiveEventSections для типа: " + type + ", уровень: " + level + ", посещено: " + visited);
+        if (plugin.getDebug())
+            plugin.getLogger().info(
+                    "getEffectiveEventSections для типа: " + type + ", уровень: " + level + ", посещено: " + visited);
 
         java.util.List<ConfigurationSection> result = new java.util.ArrayList<>();
         ConfigurationSection events = getEventsSection(type, level);
