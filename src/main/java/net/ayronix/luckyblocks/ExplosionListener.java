@@ -26,12 +26,12 @@ public class ExplosionListener implements Listener
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityExplode(EntityExplodeEvent event)
     {
-        if (LuckyBlockPlugin.debug)
+        if (plugin.getDebug())
             plugin.getLogger().info("[ExplosionListener] EntityExplodeEvent triggered. Entity: " + event.getEntityType()
                     + ", Location: " + event.getLocation());
         if (preventLuckyBlockExplosion(event.blockList(), event.getLocation()))
         {
-            if (LuckyBlockPlugin.debug)
+            if (plugin.getDebug())
                 plugin.getLogger().info("[ExplosionListener] Modified block list for EntityExplodeEvent.");
         }
     }
@@ -39,12 +39,12 @@ public class ExplosionListener implements Listener
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockExplode(BlockExplodeEvent event)
     {
-        if (LuckyBlockPlugin.debug)
+        if (plugin.getDebug())
             plugin.getLogger().info("[ExplosionListener] BlockExplodeEvent triggered. Block: "
                     + event.getBlock().getType() + ", Location: " + event.getBlock().getLocation());
         if (preventLuckyBlockExplosion(event.blockList(), event.getBlock().getLocation()))
         {
-            if (LuckyBlockPlugin.debug)
+            if (plugin.getDebug())
                 plugin.getLogger().info("[ExplosionListener] Modified block list for BlockExplodeEvent.");
         }
     }
@@ -97,7 +97,7 @@ public class ExplosionListener implements Listener
 
                         if (block.getX() == x && block.getY() == y && block.getZ() == z)
                         {
-                            if (LuckyBlockPlugin.debug)
+                            if (plugin.getDebug())
                                 plugin.getLogger().info("[ExplosionListener] Lucky Block found at " + x + "," + y + ","
                                         + z + ". Preventing its explosion (Source: " + explosionOrigin + ").");
                             iterator.remove(); // Удаляем лаки-блок из списка
@@ -116,7 +116,7 @@ public class ExplosionListener implements Listener
         }
         if (removedLuckyBlocks > 0)
         {
-            if (LuckyBlockPlugin.debug)
+            if (plugin.getDebug())
                 plugin.getLogger()
                         .info("[ExplosionListener] Prevented " + removedLuckyBlocks
                                 + " lucky blocks from exploding. Initial list size: " + initialBlockCount + ", final: "

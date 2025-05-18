@@ -163,7 +163,7 @@ public class DropItemEvent implements ICustomEvent
 
         String msg = "[DropItemEvent][DEBUG] " + itemDisp + " x" + item.getAmount() + " на " + location.getBlockX()
                 + "," + location.getBlockY() + "," + location.getBlockZ() + " | " + pdcState;
-        if (LuckyBlockPlugin.debug)
+        if (plugin.getDebug())
             plugin.getLogger().info(msg);
     }
 

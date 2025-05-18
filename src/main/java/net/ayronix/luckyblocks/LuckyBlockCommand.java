@@ -44,6 +44,40 @@ public class LuckyBlockCommand implements CommandExecutor
         }
         if (args.length >= 1)
         {
+            // --- LuckyBlock Debug Command ---
+            if (args[0].equalsIgnoreCase("debug"))
+            {
+                if (!sender.hasPermission("luckyblocks.debug"))
+                {
+                    sender.sendMessage(ChatColor.RED + "Нет прав для /" + label + " debug");
+                    return true;
+                }
+                if (args.length == 1)
+                {
+                    boolean state = plugin.getDebug();
+                    sender.sendMessage(ChatColor.AQUA + "LuckyBlocks debug: "
+                            + (state ? ChatColor.GREEN + "включён" : ChatColor.RED + "выключен"));
+                    return true;
+                }
+                if (args.length == 2)
+                {
+                    if (args[1].equalsIgnoreCase("on"))
+                    {
+                        plugin.setDebug(true);
+                        sender.sendMessage(ChatColor.GREEN + "LuckyBlocks debug включён.");
+                        return true;
+                    } else if (args[1].equalsIgnoreCase("off"))
+                    {
+                        plugin.setDebug(false);
+                        sender.sendMessage(ChatColor.YELLOW + "LuckyBlocks debug выключен.");
+                        return true;
+                    } else
+                    {
+                        sender.sendMessage(ChatColor.YELLOW + "Использование: /" + label + " debug [on|off]");
+                        return true;
+                    }
+                }
+            }
             // --- LuckyBlock Give Command ---
             if (args[0].equalsIgnoreCase("give"))
             {

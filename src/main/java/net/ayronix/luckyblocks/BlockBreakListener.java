@@ -67,15 +67,15 @@ public class BlockBreakListener implements Listener
 
         Player player = event.getPlayer();
         ConfigManager configManager = plugin.getConfigManager();
-        String eventTypeKey = ProbabilityCalculator.getRandomEvent(configManager, type, level);
+        ConfigurationSection eventSection = ProbabilityCalculator.getRandomEvent(configManager, type, level);
 
         // Удаляем координату лакиблока из PDC, если НАГРАДА НЕ сундук
         // (PLACE_CHEST)
         // и обработчик не вызовет удаление самостоятельно
         boolean isChestReward = false;
-        if (eventTypeKey != null)
+        if (eventSection != null)
         {
-            String baseKey = eventTypeKey.split("#")[0].toUpperCase();
+            String baseKey = eventSection.getName().toUpperCase();
             isChestReward = baseKey.equals("PLACE_CHEST");
         }
         if (!isChestReward)
@@ -83,24 +83,23 @@ public class BlockBreakListener implements Listener
             List<String> coords = new java.util.ArrayList<>(existing);
             coords.remove(coord);
             pdc.set(LuckyBlockPlugin.LUCKY_BLOCK_KEY, PersistentDataType.LIST.strings(), coords);
-            if (LuckyBlockPlugin.debug)
+            if (plugin.getDebug())
                 plugin.getLogger().info("[LuckyBlocks] LuckyBlock удалён из чанка по координате: " + coord);
         }
 
-        if (eventTypeKey != null)
+        if (eventSection != null)
         {
-            String baseKey = eventTypeKey.split("#")[0].toUpperCase();
+            String baseKey = eventSection.getName().toUpperCase();
             ICustomEvent eventHandler = plugin.getEventRegistry().get(baseKey);
             if (eventHandler != null)
             {
-                ConfigurationSection eventSpecificConfig = configManager.getEventConfig(type, level, eventTypeKey);
-                if (eventSpecificConfig != null && eventSpecificConfig.getBoolean("enabled", true))
+                if (eventSection.getBoolean("enabled", true))
                 {
                     // Для PLACE_CHEST и других ивентов — подмешиваем
                     // _luckyblock_type/_level
                     org.bukkit.configuration.MemoryConfiguration enhancedConfig = new org.bukkit.configuration.MemoryConfiguration();
-                    for (String key : eventSpecificConfig.getKeys(false))
-                        enhancedConfig.set(key, eventSpecificConfig.get(key));
+                    for (String key : eventSection.getKeys(false))
+                        enhancedConfig.set(key, eventSection.get(key));
                     enhancedConfig.set("_luckyblock_type", type);
                     enhancedConfig.set("_luckyblock_level", level);
                     net.ayronix.luckyblocks.LuckyBlockReplaceManager.allow(block.getLocation());
@@ -112,8 +111,8 @@ public class BlockBreakListener implements Listener
                 }
             } else
             {
-                plugin.getLogger().warning("Не найден обработчик для события: " + eventTypeKey + " для типа " + type
-                        + " и уровня " + level);
+                plugin.getLogger().warning(
+                        "Не найден обработчик для события: " + baseKey + " для типа " + type + " и уровня " + level);
                 plugin.getEventRegistry().get("DEFAULT").execute(player, block.getLocation(), null, plugin);
             }
         } else

@@ -56,7 +56,7 @@ public class BlockPlaceListener implements Listener
         coords.add(coord);
         pdc.set(LuckyBlockPlugin.LUCKY_BLOCK_KEY, PersistentDataType.LIST.strings(), coords);
 
-        if (LuckyBlockPlugin.debug)
+        if (plugin.getDebug())
         {
             event.getPlayer().sendMessage("§aLucky Block установлен в чанке!");
         }

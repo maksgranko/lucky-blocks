@@ -29,10 +29,20 @@ public final class LuckyBlockPlugin extends JavaPlugin
      * плагине проходит только через этот флаг. При выключенном debug (по
      * умолчанию) отладка не выводится вообще.
      */
-    public static boolean debug = true;
+    private boolean debug = false;
     public static NamespacedKey LUCKY_BLOCK_KEY;
     public static NamespacedKey LUCKY_BLOCK_TYPE_KEY;
     public static NamespacedKey LUCKY_BLOCK_LEVEL_KEY;
+
+    public boolean getDebug()
+    {
+        return debug;
+    }
+
+    public void setDebug(boolean debug)
+    {
+        this.debug = debug;
+    }
 
     private FileConfiguration luckyblocksConfig;
     private ConfigManager configManager;
