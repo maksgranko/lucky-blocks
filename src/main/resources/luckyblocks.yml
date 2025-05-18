@@ -8,75 +8,177 @@ types:
         display-name: "&aПозитивный ЛакиБлок &eI уровня"
         events:
           DROP_ITEM:
-            enabled: true
-            weight: 600
-            items:
-              - item: IRON_INGOT
-                amount: 5
-              - item: COAL
-                amount: 10
+            - enabled: true
+              weight: 60
+              items:
+                - item: IRON_INGOT
+                  amount: 5
+            - enabled: true
+              weight: 50
+              items:
+                - item: GOLD_NUGGET
+                  amount: 10
+            - enabled: true
+              weight: 30
+              items:
+                - item: COAL
+                  amount: 8
+            - enabled: true
+              weight: 23
+              items:
+                - item: GOLD_INGOT
+                  amount: 2
+                - item: IRON_NUGGET
+                  amount: 8
+            - enabled: true
+              weight: 15
+              items:
+                - item: EMERALD
+                  amount: 1
           HEAL:
             enabled: true
-            weight: 200
-            amount: 4
+            weight: 80
+            amount: 5
+            effects:
+              - REGENERATION
           PLACE_BLOCK:
             enabled: true
-            weight: 100
+            weight: 60
             blocks:
               - material: OAK_LOG
                 relative-coords: { x: 0, y: 1, z: 0 }
+              - material: BIRCH_LOG
+                relative-coords: { x: 1, y: 0, z: 0 }
+              - material: HONEY_BLOCK
+                relative-coords: { x: 0, y: 0, z: 1 }
+          GIVE_EFFECT:
+            enabled: true
+            weight: 37
+            effect: ABSORPTION
+            amplifier: 2
+            duration: 120
+          COMMAND_EXEC:
+            enabled: true
+            weight: 24
+            command: "give %player% cooked_beef 4"
           DEFAULT:
             enabled: true
-            weight: 100
+            weight: 40
       2:
         display-name: "&aПозитивный ЛакиБлок &eII уровня"
         events:
           DROP_ITEM:
-            enabled: true
-            weight: 500
-            items:
-              - item: GOLD_INGOT
-                amount: 3
-              - item: LAPIS_LAZULI
-                amount: 8
+            - enabled: true
+              weight: 46
+              items:
+                - item: GOLD_INGOT
+                  amount: 4
+            - enabled: true
+              weight: 28
+              items:
+                - item: AMETHYST_SHARD
+                  amount: 3
+            - enabled: true
+              weight: 19
+              items:
+                - item: DIAMOND
+                  amount: 1
+            - enabled: true
+              weight: 20
+              items:
+                - item: LAPIS_LAZULI
+                  amount: 6
+                - item: GLOWSTONE_DUST
+                  amount: 3
+            - enabled: true
+              weight: 10
+              items:
+                - item: NETHERITE_SCRAP
+                  amount: 1
           HEAL:
             enabled: true
-            weight: 300
-            amount: 8
+            weight: 70
+            amount: 10
             effects:
               - REGENERATION
+              - ABSORPTION
+          GIVE_EFFECT:
+            enabled: true
+            weight: 33
+            effect: SPEED
+            amplifier: 1
+            duration: 240
           PLACE_CHEST:
             enabled: true
-            weight: 200
+            weight: 65
             item-table: positive_loot_1
             relative-coords: { x: 0, y: 0, z: 0 }
+          SUMMON:
+            enabled: true
+            weight: 25
+            entity: "irongolem"
+            count: 1
+          COMMAND_EXEC:
+            enabled: true
+            weight: 16
+            command: "give %player% diamond 2"
       3:
         display-name: "&aПозитивный ЛакиБлок &eIII уровня"
         events:
           DROP_ITEM:
-            enabled: true
-            weight: 400
-            items:
-              - item: DIAMOND
-                amount: 2
-              - item: EMERALD
-                amount: 3
+            - enabled: true
+              weight: 16
+              items:
+                - item: DIAMOND
+                  amount: 2
+            - enabled: true
+              weight: 20
+              items:
+                - item: EMERALD
+                  amount: 5
+            - enabled: true
+              weight: 7
+              items:
+                - item: NETHER_STAR
+                  amount: 1
+            - enabled: true
+              weight: 12
+              items:
+                - item: ENCHANTED_GOLDEN_APPLE
+                  amount: 1
+            - enabled: true
+              weight: 16
+              items:
+                - item: BLAZE_ROD
+                  amount: 3
           HEAL:
             enabled: true
-            weight: 200
-            amount: 12
+            weight: 40
+            amount: 15
             effects:
               - REGENERATION
               - ABSORPTION
+              - FIRE_RESISTANCE
           PLACE_CHEST:
             enabled: true
-            weight: 300
+            weight: 58
             item-table: positive_loot_2
             relative-coords: { x: 0, y: 0, z: 0 }
+          SUMMON:
+            enabled: true
+            weight: 15
+            entity: "axolotl"
+            count: 2
+          GIVE_EFFECT:
+            enabled: true
+            weight: 17
+            effect: "HASTE"
+            amplifier: 2
+            duration: 240
           COMMAND_EXEC:
             enabled: true
-            weight: 100
-            command: "give %player% experience_bottle 5"
+            weight: 7
+            command: "give %player% elytra 1"
 
   negative:
     item:
@@ -88,67 +190,169 @@ types:
         events:
           EXPLOSION:
             enabled: true
-            weight: 150
+            weight: 80
             power: 2.0
           DROP_ITEM:
-            enabled: true
-            weight: 300
-            items:
-              - item: DIRT
-                amount: 5
-              - item: GRAVEL
-                amount: 5
+            - enabled: true
+              weight: 37
+              items:
+                - item: DIRT
+                  amount: 10
+            - enabled: true
+              weight: 29
+              items:
+                - item: GRAVEL
+                  amount: 8
+            - enabled: true
+              weight: 12
+              items:
+                - item: FLINT
+                  amount: 4
+            - enabled: true
+              weight: 13
+              items:
+                - item: DEAD_BUSH
+                  amount: 7
+            - enabled: true
+              weight: 7
+              items:
+                - item: LEATHER_BOOTS
+                  amount: 1
           PLACE_BLOCK:
             enabled: true
-            weight: 200
+            weight: 30
             blocks:
               - material: COBWEB
                 relative-coords: { x: 0, y: 1, z: 0 }
-              - material: COBWEB
+              - material: MAGMA_BLOCK
                 relative-coords: { x: 1, y: 0, z: 0 }
-              - material: COBWEB
-                relative-coords: { x: -1, y: 0, z: 0 }
-              - material: COBWEB
-                relative-coords: { x: 0, y: -1, z: 0 }
-              - material: COBWEB
-                relative-coords: { x: 0, y: 0, z: 1 }
-              - material: COBWEB
-                relative-coords: { x: 0, y: 0, z: -1 }
+          COMMAND_EXEC:
+            enabled: true
+            weight: 14
+            command: "effect give %player% blindness 8 2"
+          GIVE_EFFECT:
+            enabled: true
+            weight: 27
+            effect: SLOW
+            amplifier: 1
+            duration: 100
+          COMMAND_EXEC:
+            enabled: true
+            weight: 10
+            command: "effect give %player% nausea 25 1"
       2:
         display-name: "&cНегативный ЛакиБлок &eII уровня"
         events:
           EXPLOSION:
             enabled: true
-            weight: 150
+            weight: 130
             power: 4.0
-          PLAYER_COMMAND:
+          DROP_ITEM:
+            - enabled: true
+              weight: 21
+              items:
+                - item: ZOMBIE_HEAD
+                  amount: 1
+            - enabled: true
+              weight: 19
+              items:
+                - item: ROTTEN_FLESH
+                  amount: 8
+            - enabled: true
+              weight: 17
+              items:
+                - item: BONE
+                  amount: 6
+            - enabled: true
+              weight: 10
+              items:
+                - item: STONE_SWORD
+                  amount: 1
+          COMMAND_EXEC:
             enabled: true
-            weight: 300
-            command: "effect give %player% slowness 10 2"
+            weight: 18
+            command: "effect give %player% slowness 16 2"
           PLACE_BLOCK:
             enabled: true
-            weight: 100
+            weight: 16
             material: OBSIDIAN
             relative-coords: { x: 0, y: 1, z: 0 }
+          COMMAND_EXEC:
+            enabled: true
+            weight: 19
+            command: "summon zombie"
+          PLACE_LAVA:
+            enabled: true
+            weight: 22
+            blocks:
+              - material: LAVA
+                relative-coords: { x: 0, y: 0, z: 0 }
+          GIVE_EFFECT:
+            enabled: true
+            weight: 13
+            effect: HUNGER
+            amplifier: 2
+            duration: 200
       3:
         display-name: "&cНегативный ЛакиБлок &eIII уровня"
         events:
           EXPLOSION:
             enabled: true
-            weight: 150
-            power: 6.0
-          PLAYER_COMMAND:
+            weight: 100
+            power: 7.0
+          DROP_ITEM:
+            - enabled: true
+              weight: 11
+              items:
+                - item: TNT
+                  amount: 2
+            - enabled: true
+              weight: 13
+              items:
+                - item: ROTTEN_FLESH
+                  amount: 16
+            - enabled: true
+              weight: 12
+              items:
+                - item: COAL
+                  amount: 7
+            - enabled: true
+              weight: 14
+              items:
+                - item: IRON_SWORD
+                  amount: 1
+            - enabled: true
+              weight: 11
+              items:
+                - item: PUFFERFISH
+                  amount: 4
+          COMMAND_EXEC:
             enabled: true
-            weight: 200
-            command: "effect give %player% weakness 15 1"
+            weight: 20
+            command: "effect give %player% weakness 22 2"
+          COMMAND_EXEC:
+            enabled: true
+            weight: 18
+            command: "summon enderman"
           PLACE_CHEST:
             enabled: true
-            weight: 100
+            weight: 30
             item-table: negative_loot_1
             relative-coords: { x: 0, y: 0, z: 0 }
+          SUMMON:
+            enabled: true
+            weight: 23
+            entity: "creeper"
+            count: 2
+          GIVE_EFFECT:
+            enabled: true
+            weight: 17
+            effect: POISON
+            amplifier: 2
+            duration: 160
 
   neutral:
-    require: [positive, negative]
+    require: [positive:0.7, negative:0.3]
     item:
       material: SPONGE
       custom-model-data: 1003
@@ -157,71 +361,142 @@ types:
         display-name: "&fНейтральный ЛакиБлок &eI уровня"
         events:
           DROP_ITEM:
-            enabled: true
-            weight: 400
-            items:
-              - item: STONE
-                amount: 16
-              - item: DIRT
-                amount: 16
+            - enabled: true
+              weight: 41
+              items:
+                - item: STONE
+                  amount: 8
+            - enabled: true
+              weight: 38
+              items:
+                - item: DIRT
+                  amount: 8
+            - enabled: true
+              weight: 30
+              items:
+                - item: COBBLESTONE
+                  amount: 8
+            - enabled: true
+              weight: 16
+              items:
+                - item: MELON
+                  amount: 5
+            - enabled: true
+              weight: 5
+              items:
+                - item: GOLD_NUGGET
+                  amount: 2
           HEAL:
             enabled: true
-            weight: 200
-            amount: 2
-          DEFAULT:
+            weight: 24
+            amount: 4
+          GIVE_EFFECT:
             enabled: true
-            weight: 100
+            weight: 20
+            effect: LUCK
+            amplifier: 2
+            duration: 60
+          COMMAND_EXEC:
+            enabled: true
+            weight: 8
+            command: "summon chicken"
+          PLACE_BLOCK:
+            enabled: true
+            weight: 17
+            blocks:
+              - material: MELON
+                relative-coords: { x: 0, y: 1, z: 0 }
       2:
         display-name: "&fНейтральный ЛакиБлок &eII уровня"
         events:
           DROP_ITEM:
-            enabled: true
-            weight: 300
-            items:
-              - item: COBBLESTONE
-                amount: 32
-              - item: SAND
-                amount: 32
+            - enabled: true
+              weight: 16
+              items:
+                - item: COBBLESTONE
+                  amount: 16
+            - enabled: true
+              weight: 11
+              items:
+                - item: SAND
+                  amount: 13
+            - enabled: true
+              weight: 9
+              items:
+                - item: CLAY_BALL
+                  amount: 7
+            - enabled: true
+              weight: 7
+              items:
+                - item: APPLE
+                  amount: 2
           PLACE_BLOCK:
             enabled: true
-            weight: 300
+            weight: 22
             blocks:
               - material: GLASS
                 relative-coords: { x: 0, y: 1, z: 0 }
-              - material: GLASS
+              - material: SANDSTONE
                 relative-coords: { x: 1, y: 0, z: 0 }
-              - material: GLASS
+              - material: DIAMOND_BLOCK
                 relative-coords: { x: -1, y: 0, z: 0 }
-              - material: GLASS
-                relative-coords: { x: 0, y: 0, z: 1 }
-              - material: GLASS
-                relative-coords: { x: 0, y: 0, z: -1 }
           PLACE_CHEST:
             enabled: true
-            weight: 200
+            weight: 18
             item-table: neutral_loot_1
             relative-coords: { x: 0, y: 0, z: 0 }
-          PLAYER_COMMAND:
+          GIVE_EFFECT:
             enabled: true
-            weight: 200
-            command: "say Что-то произошло!"
+            weight: 14
+            effect: GLOWING
+            amplifier: 1
+            duration: 150
+          SUMMON:
+            enabled: true
+            weight: 10
+            entity: "sheep"
+            count: 3
       3:
         display-name: "&fНейтральный ЛакиБлок &eIII уровня"
         events:
           DROP_ITEM:
-            enabled: true
-            weight: 200
-            items:
-              - item: IRON_INGOT
-                amount: 2
-              - item: COAL
-                amount: 5
+            - enabled: true
+              weight: 7
+              items:
+                - item: IRON_INGOT
+                  amount: 2
+            - enabled: true
+              weight: 6
+              items:
+                - item: COAL
+                  amount: 4
+            - enabled: true
+              weight: 4
+              items:
+                - item: GLASS_BOTTLE
+                  amount: 3
+            - enabled: true
+              weight: 5
+              items:
+                - item: APPLE
+                  amount: 2
           PLACE_CHEST:
             enabled: true
-            weight: 300
+            weight: 12
             item-table: neutral_loot_2
             relative-coords: { x: 0, y: 0, z: 0 }
           COMMAND_EXEC:
             enabled: true
-            weight: 300
-            command: "summon zombie"
+            weight: 6
+            command: "summon rabbit"
+          GIVE_EFFECT:
+            enabled: true
+            weight: 7
+            effect: LEVITATION
+            amplifier: 1
+            duration: 70
+          SUMMON:
+            enabled: true
+            weight: 7
+            entity: "cow"
+            count: 3

@@ -138,12 +138,12 @@ public class ConfigManager
 
     /**
      * Получить все секции событий данного уровня для типа, с учётом
-     * require-наследования. Возвращает список ConfigurationSection (может быть
-     * пустым, если нет событий). Дубликаты НЕ фильтрует — порядок: сначала
-     * свои, потом по порядку require.
+     * require-наследования и множителя весов (weightMultiplier). Для require с
+     * синтаксисом 'name:multiplier' множитель применяется для всех событий из
+     * require-наследия. Для "обычных" секций всегда multiplier=1.0.
      */
     public java.util.List<ConfigurationSection> getEffectiveEventSections(String type, int level,
-            java.util.Set<String> visited)
+            java.util.Set<String> visited, double weightMultiplier)
     {
         if (visited.contains(type))
         {
@@ -173,12 +173,15 @@ public class ConfigManager
                     {
                         if (obj instanceof java.util.Map<?, ?> map)
                         {
-                            // Преобразуем map в отдельную секцию для унификации
-                            // с ConfigurationSection
                             org.bukkit.configuration.MemoryConfiguration tempSection = new org.bukkit.configuration.MemoryConfiguration();
                             map.forEach((k, v) -> tempSection.set(String.valueOf(k), v));
                             tempSection.set("__event_key__", key);
                             tempSection.set("__event_index__", idx);
+                            if (weightMultiplier != 1.0)
+                            {
+                                int baseWeight = tempSection.getInt("weight", 1);
+                                tempSection.set("weight", Math.max(1, (int) Math.round(baseWeight * weightMultiplier)));
+                            }
                             result.add(tempSection);
                         }
                         idx++;
@@ -187,9 +190,23 @@ public class ConfigManager
                 // Если значение - ConfigurationSection (одиночное событие)
                 else if (value instanceof ConfigurationSection ev)
                 {
-                    ev.set("__event_key__", key);
-                    ev.set("__event_index__", 0);
-                    result.add(ev);
+                    // копируем если нужно множитель, иначе добавляем напрямую
+                    if (weightMultiplier != 1.0)
+                    {
+                        org.bukkit.configuration.MemoryConfiguration copy = new org.bukkit.configuration.MemoryConfiguration();
+                        for (String k : ev.getKeys(false))
+                            copy.set(k, ev.get(k));
+                        copy.set("__event_key__", key);
+                        copy.set("__event_index__", 0);
+                        int baseWeight = ev.getInt("weight", 1);
+                        copy.set("weight", Math.max(1, (int) Math.round(baseWeight * weightMultiplier)));
+                        result.add(copy);
+                    } else
+                    {
+                        ev.set("__event_key__", key);
+                        ev.set("__event_index__", 0);
+                        result.add(ev);
+                    }
                 }
                 // Если значение - карта, но не секция (бывает при yaml)
                 else if (value instanceof java.util.Map<?, ?> map)
@@ -198,6 +215,11 @@ public class ConfigManager
                     map.forEach((k, v) -> tempSection.set(String.valueOf(k), v));
                     tempSection.set("__event_key__", key);
                     tempSection.set("__event_index__", 0);
+                    if (weightMultiplier != 1.0)
+                    {
+                        int baseWeight = tempSection.getInt("weight", 1);
+                        tempSection.set("weight", Math.max(1, (int) Math.round(baseWeight * weightMultiplier)));
+                    }
                     result.add(tempSection);
                 }
             }
@@ -222,11 +244,26 @@ public class ConfigManager
         }
         for (String parent : requires)
         {
-            result.addAll(getEffectiveEventSections(parent, level, visited));
+            String parentType = parent;
+            double multiplier = 1.0;
+            int idx = parent.indexOf(':');
+            if (idx > 0 && idx + 1 < parent.length())
+            {
+                parentType = parent.substring(0, idx).trim();
+                try
+                {
+                    multiplier = Double.parseDouble(parent.substring(idx + 1));
+                } catch (NumberFormatException e)
+                {
+                    multiplier = 1.0;
+                }
+            }
+            result.addAll(getEffectiveEventSections(parentType, level, visited, weightMultiplier * multiplier));
         }
         visited.remove(type);
-        plugin.getLogger().info("getEffectiveEventSections для типа: " + type + ", уровень: " + level
-                + ", итоговый список событий: " + result.size());
+        if (plugin.getDebug())
+            plugin.getLogger().info("getEffectiveEventSections для типа: " + type + ", уровень: " + level
+                    + ", итоговый список событий: " + result.size());
         return result;
     }
 

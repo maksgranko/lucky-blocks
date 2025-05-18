@@ -119,6 +119,7 @@ public final class LuckyBlockPlugin extends JavaPlugin
         eventRegistry.put("PLACE_CHEST", new net.ayronix.luckyblocks.events.PlaceChestEvent());
         eventRegistry.put("COMMAND_EXEC", new net.ayronix.luckyblocks.events.CommandExecEvent());
         eventRegistry.put("PLAYER_COMMAND", new net.ayronix.luckyblocks.events.PlayerCommandEvent());
+        eventRegistry.put("GIVE_EFFECT", new net.ayronix.luckyblocks.events.GiveEffectEvent());
         eventRegistry.put("HEAL", new HealEvent());
         eventRegistry.put("DEFAULT", new DefaultEvent());
     }

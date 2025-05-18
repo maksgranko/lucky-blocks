@@ -23,7 +23,7 @@ public class ProbabilityCalculator
     {
         // Новый способ: собираем все события с учетом наследия (require)
         List<ConfigurationSection> allEvents = configManager.getEffectiveEventSections(type, level,
-                new java.util.HashSet<>());
+                new java.util.HashSet<>(), 1.0);
 
         if (configManager.getPlugin().getDebug())
             configManager.getPlugin().getLogger().info("getRandomEvent для типа: " + type + ", уровень: " + level

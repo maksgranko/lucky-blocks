@@ -75,7 +75,9 @@ public class BlockBreakListener implements Listener
         boolean isChestReward = false;
         if (eventSection != null)
         {
-            String baseKey = eventSection.getName().toUpperCase();
+            String baseKey = eventSection.getString("__event_key__", "");
+            if (!baseKey.isEmpty())
+                baseKey = baseKey.toUpperCase();
             isChestReward = baseKey.equals("PLACE_CHEST");
         }
         if (!isChestReward)
@@ -89,7 +91,9 @@ public class BlockBreakListener implements Listener
 
         if (eventSection != null)
         {
-            String baseKey = eventSection.getName().toUpperCase();
+            String baseKey = eventSection.getString("__event_key__", "");
+            if (!baseKey.isEmpty())
+                baseKey = baseKey.toUpperCase();
             ICustomEvent eventHandler = plugin.getEventRegistry().get(baseKey);
             if (eventHandler != null)
             {
