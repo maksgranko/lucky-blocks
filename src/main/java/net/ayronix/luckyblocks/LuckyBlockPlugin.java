@@ -82,6 +82,18 @@ public final class LuckyBlockPlugin extends JavaPlugin
             saveResource("chests.yml", false);
             getLogger().info("Не найден chests.yml. Выгружен шаблон.");
         }
+        // Создание папки анимаций по умолчанию
+        File animationsDir = new File(getDataFolder(), "animations");
+        if (!animationsDir.exists())
+        {
+            if (animationsDir.mkdirs())
+            {
+                getLogger().info("Создана папка для анимаций: " + animationsDir.getAbsolutePath());
+            } else
+            {
+                getLogger().warning("Не удалось создать папку для анимаций: " + animationsDir.getAbsolutePath());
+            }
+        }
 
         try
         {

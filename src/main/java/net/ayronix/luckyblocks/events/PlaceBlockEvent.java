@@ -16,23 +16,28 @@ public class PlaceBlockEvent implements ICustomEvent
     @Override
     public void execute(Player player, Location location, ConfigurationSection eventConfig, LuckyBlockPlugin plugin)
     {
-        // Новый синтаксис: blocks: [...] — массив с описанием блоков, иначе
-        // fallback на старый
-        if (eventConfig.contains("blocks") && eventConfig.get("blocks") instanceof List<?> blockList)
-        {
-            for (Object obj : blockList)
-            {
-                if (obj instanceof Map<?, ?> map)
+        net.ayronix.luckyblocks.EventAnimationUtil.handleWithAnimationAndDelay(player, location, eventConfig, plugin,
+                () ->
                 {
-                    placeBlockFromMap(player, location, map, plugin);
-                }
-            }
-        } else
-        {
-            placeBlockFromMap(player, location, eventConfig.getValues(false), plugin);
-        }
-        // Запуск дополнительных команд (execute: ...)
-        net.ayronix.luckyblocks.EventChainUtil.executeChained(player, location, eventConfig, plugin);
+                    // Новый синтаксис: blocks: [...] — массив с описанием
+                    // блоков, иначе
+                    // fallback на старый
+                    if (eventConfig.contains("blocks") && eventConfig.get("blocks") instanceof List<?> blockList)
+                    {
+                        for (Object obj : blockList)
+                        {
+                            if (obj instanceof Map<?, ?> map)
+                            {
+                                placeBlockFromMap(player, location, map, plugin);
+                            }
+                        }
+                    } else
+                    {
+                        placeBlockFromMap(player, location, eventConfig.getValues(false), plugin);
+                    }
+                    // Запуск дополнительных команд (execute: ...)
+                    net.ayronix.luckyblocks.EventChainUtil.executeChained(player, location, eventConfig, plugin);
+                });
     }
 
     // Метод для установки одного блока по свойствам из map

@@ -25,24 +25,29 @@ public class DropItemEvent implements ICustomEvent
     @Override
     public void execute(Player player, Location location, ConfigurationSection eventConfig, LuckyBlockPlugin plugin)
     {
-        // Множественная поддержка (items: [...]) и обратная совместимость
-        if (eventConfig.contains("items") && eventConfig.get("items") instanceof List<?> itemListRaw)
-        {
-            for (Object obj : itemListRaw)
-            {
-                if (obj instanceof Map<?, ?> map)
+        net.ayronix.luckyblocks.EventAnimationUtil.handleWithAnimationAndDelay(player, location, eventConfig, plugin,
+                () ->
                 {
-                    dropItemFromMap(player, location, map, plugin);
-                }
-            }
-        } else
-        {
-            // старый вариант — один предмет из параметров
-            dropItemFromMap(player, location, eventConfig.getValues(false), plugin);
-        }
+                    // Множественная поддержка (items: [...]) и обратная
+                    // совместимость
+                    if (eventConfig.contains("items") && eventConfig.get("items") instanceof List<?> itemListRaw)
+                    {
+                        for (Object obj : itemListRaw)
+                        {
+                            if (obj instanceof Map<?, ?> map)
+                            {
+                                dropItemFromMap(player, location, map, plugin);
+                            }
+                        }
+                    } else
+                    {
+                        // старый вариант — один предмет из параметров
+                        dropItemFromMap(player, location, eventConfig.getValues(false), plugin);
+                    }
 
-        // Запуск дополнительных команд (execute: ...)
-        net.ayronix.luckyblocks.EventChainUtil.executeChained(player, location, eventConfig, plugin);
+                    // Запуск дополнительных команд (execute: ...)
+                    net.ayronix.luckyblocks.EventChainUtil.executeChained(player, location, eventConfig, plugin);
+                });
     }
 
     // Поддержка логики дропа одного предмета по параметрам

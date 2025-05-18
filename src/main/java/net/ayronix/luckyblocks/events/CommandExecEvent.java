@@ -25,22 +25,25 @@ public class CommandExecEvent implements ICustomEvent
     @Override
     public void execute(Player player, Location location, ConfigurationSection eventConfig, LuckyBlockPlugin plugin)
     {
-        // Поддержка как одиночной команды, так и списка
-        if (eventConfig.contains("command"))
-        {
-            if (eventConfig.isList("command"))
-            {
-                for (String cmd : eventConfig.getStringList("command"))
+        net.ayronix.luckyblocks.EventAnimationUtil.handleWithAnimationAndDelay(player, location, eventConfig, plugin,
+                () ->
                 {
-                    dispatchWithVars(cmd, player, location);
-                }
-            } else
-            {
-                String cmd = eventConfig.getString("command");
-                if (cmd != null && !cmd.isEmpty())
-                    dispatchWithVars(cmd, player, location);
-            }
-        }
+                    if (eventConfig.contains("command"))
+                    {
+                        if (eventConfig.isList("command"))
+                        {
+                            for (String cmd : eventConfig.getStringList("command"))
+                            {
+                                dispatchWithVars(cmd, player, location);
+                            }
+                        } else
+                        {
+                            String cmd = eventConfig.getString("command");
+                            if (cmd != null && !cmd.isEmpty())
+                                dispatchWithVars(cmd, player, location);
+                        }
+                    }
+                });
     }
 
     // Подстановка координат, ника, etc

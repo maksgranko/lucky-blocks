@@ -15,34 +15,32 @@ public class HealEvent implements ICustomEvent
     @Override
     public void execute(Player player, Location location, ConfigurationSection eventConfig, LuckyBlockPlugin plugin)
     {
-        // Можно добавить параметр для количества исцеления или эффектов из
-        // eventConfig
-        // double healAmount = eventConfig.getDouble("amount",
-        // player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
-        // player.setHealth(Math.min(player.getHealth() + healAmount,
-        // player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()));
-        AttributeInstance max_health = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-        if (max_health != null)
-        {
-            double max = max_health.getValue();
-            double healPercent = 100.0;
-            if (eventConfig != null && eventConfig.contains("heal_percent"))
-            {
-                healPercent = eventConfig.getDouble("heal_percent", 100.0);
-            }
-            healPercent = Math.max(0.0, Math.min(healPercent, 100.0));
-            double healAmount = max * healPercent / 100.0;
-            double newHealth = Math.min(player.getHealth() + healAmount, max);
-            player.setHealth(newHealth);
-            if (healPercent >= 99.99)
-            {
-                player.sendMessage("§cВы полностью исцелены!");
-            } else
-            {
-                player.sendMessage("§cВы исцелены на " + (int) healPercent + "% здоровья!");
-            }
-        }
-        // Запуск дополнительных команд (execute: ...)
-        net.ayronix.luckyblocks.EventChainUtil.executeChained(player, location, eventConfig, plugin);
+        net.ayronix.luckyblocks.EventAnimationUtil.handleWithAnimationAndDelay(player, location, eventConfig, plugin,
+                () ->
+                {
+                    AttributeInstance max_health = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+                    if (max_health != null)
+                    {
+                        double max = max_health.getValue();
+                        double healPercent = 100.0;
+                        if (eventConfig != null && eventConfig.contains("heal_percent"))
+                        {
+                            healPercent = eventConfig.getDouble("heal_percent", 100.0);
+                        }
+                        healPercent = Math.max(0.0, Math.min(healPercent, 100.0));
+                        double healAmount = max * healPercent / 100.0;
+                        double newHealth = Math.min(player.getHealth() + healAmount, max);
+                        player.setHealth(newHealth);
+                        if (healPercent >= 99.99)
+                        {
+                            player.sendMessage("§cВы полностью исцелены!");
+                        } else
+                        {
+                            player.sendMessage("§cВы исцелены на " + (int) healPercent + "% здоровья!");
+                        }
+                    }
+                    // Запуск дополнительных команд (execute: ...)
+                    net.ayronix.luckyblocks.EventChainUtil.executeChained(player, location, eventConfig, plugin);
+                });
     }
 }

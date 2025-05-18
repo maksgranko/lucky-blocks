@@ -192,6 +192,8 @@ types:
             enabled: true
             weight: 80
             power: 2.0
+            animation: particles
+            delay: 2
           DROP_ITEM:
             - enabled: true
               weight: 37

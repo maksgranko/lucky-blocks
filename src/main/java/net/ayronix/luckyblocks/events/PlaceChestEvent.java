@@ -24,262 +24,285 @@ public class PlaceChestEvent implements ICustomEvent
     @Override @SuppressWarnings("LoggerStringConcat")
     public void execute(Player player, Location location, ConfigurationSection eventConfig, LuckyBlockPlugin plugin)
     {
-        String type = eventConfig.contains("_luckyblock_type") ? eventConfig.getString("_luckyblock_type") : "neutral";
-        String itemTable = eventConfig.getString("item-table", "main_loot");
-
-        // table random
-        if ("random".equalsIgnoreCase(itemTable))
-        {
-            File chestsFile = new File(plugin.getDataFolder(), "chests.yml");
-            ConfigurationSection catSec = null;
-            if (chestsFile.exists())
-            {
-                YamlConfiguration chestsR = YamlConfiguration.loadConfiguration(chestsFile);
-                catSec = chestsR.getConfigurationSection(type);
-            }
-            if (catSec != null)
-            {
-                List<String> allTables = new ArrayList<>(catSec.getKeys(false));
-                if (!allTables.isEmpty())
+        net.ayronix.luckyblocks.EventAnimationUtil.handleWithAnimationAndDelay(player, location, eventConfig, plugin,
+                () ->
                 {
-                    itemTable = allTables.get(new Random().nextInt(allTables.size()));
-                }
-            }
-        }
+                    String type = eventConfig.contains("_luckyblock_type") ? eventConfig.getString("_luckyblock_type")
+                            : "neutral";
+                    String itemTable = eventConfig.getString("item-table", "main_loot");
 
-        ConfigurationSection rel = eventConfig.getConfigurationSection("relative-coords");
-        int dx = rel != null ? rel.getInt("x", 0) : 0;
-        int dy = rel != null ? rel.getInt("y", 0) : 0;
-        int dz = rel != null ? rel.getInt("z", 0) : 0;
+                    // table random
+                    if ("random".equalsIgnoreCase(itemTable))
+                    {
+                        File chestsFile = new File(plugin.getDataFolder(), "chests.yml");
+                        ConfigurationSection catSec = null;
+                        if (chestsFile.exists())
+                        {
+                            YamlConfiguration chestsR = YamlConfiguration.loadConfiguration(chestsFile);
+                            catSec = chestsR.getConfigurationSection(type);
+                        }
+                        if (catSec != null)
+                        {
+                            List<String> allTables = new ArrayList<>(catSec.getKeys(false));
+                            if (!allTables.isEmpty())
+                            {
+                                itemTable = allTables.get(new Random().nextInt(allTables.size()));
+                            }
+                        }
+                    }
 
-        File chestsFile = new File(plugin.getDataFolder(), "chests.yml");
-        if (!chestsFile.exists())
-        {
-            player.sendMessage("§cНе найден chests.yml.");
-            return;
-        }
-        YamlConfiguration chests = YamlConfiguration.loadConfiguration(chestsFile);
-        ConfigurationSection tableSection = chests.getConfigurationSection(type + "." + itemTable);
-        if (tableSection == null)
-        {
-            player.sendMessage("§cВ категории \"" + type + "\" не найдена таблица " + itemTable);
-            return;
-        }
+                    ConfigurationSection rel = eventConfig.getConfigurationSection("relative-coords");
+                    int dx = rel != null ? rel.getInt("x", 0) : 0;
+                    int dy = rel != null ? rel.getInt("y", 0) : 0;
+                    int dz = rel != null ? rel.getInt("z", 0) : 0;
 
-        int slots = tableSection.getInt("slots", 27);
-        List<Map<?, ?>> lootVariants = tableSection.getMapList("loot");
-        if (lootVariants == null || lootVariants.isEmpty())
-        {
-            player.sendMessage("§cПустая таблица лута.");
-            return;
-        }
+                    File chestsFile = new File(plugin.getDataFolder(), "chests.yml");
+                    if (!chestsFile.exists())
+                    {
+                        player.sendMessage("§cНе найден chests.yml.");
+                        return;
+                    }
+                    YamlConfiguration chests = YamlConfiguration.loadConfiguration(chestsFile);
+                    ConfigurationSection tableSection = chests.getConfigurationSection(type + "." + itemTable);
+                    if (tableSection == null)
+                    {
+                        player.sendMessage("§cВ категории \"" + type + "\" не найдена таблица " + itemTable);
+                        return;
+                    }
 
-        int totalWeight = 0;
-        for (Map<?, ?> variant : lootVariants)
-        {
-            Object weightObj = variant.get("weight");
-            if (weightObj instanceof Number)
-                totalWeight += ((Number) weightObj).intValue();
-        }
-        int choose = new Random().nextInt(totalWeight);
-        Map<?, ?> selected = null;
-        int cumulative = 0;
-        for (Map<?, ?> variant : lootVariants)
-        {
-            Object weightObj = variant.get("weight");
-            int w = weightObj instanceof Number ? ((Number) weightObj).intValue() : 1;
-            cumulative += w;
-            if (choose < cumulative)
-            {
-                selected = variant;
-                break;
-            }
-        }
-        if (selected == null)
-            selected = lootVariants.get(0);
+                    int slots = tableSection.getInt("slots", 27);
+                    List<Map<?, ?>> lootVariants = tableSection.getMapList("loot");
+                    if (lootVariants == null || lootVariants.isEmpty())
+                    {
+                        player.sendMessage("§cПустая таблица лута.");
+                        return;
+                    }
 
-        @SuppressWarnings("unchecked")
-        List<Map<String, Object>> itemsList = (List<Map<String, Object>>) selected.get("items");
-        if (itemsList == null)
-            itemsList = new ArrayList<>();
-        if (plugin.getDebug())
-            plugin.getLogger().info("PlaceChestEvent: [DEBUG] Взятый items: Всего=" + itemsList.size());
-        if (plugin.getDebug())
-        {
-            for (int ix = 0; ix < Math.min(5, itemsList.size()); ix++)
-            {
-                Map<String, Object> itemMap = itemsList.get(ix);
-                plugin.getLogger().info("PlaceChestEvent: item[" + ix + "] = " + itemMap);
-            }
-        }
+                    int totalWeight = 0;
+                    for (Map<?, ?> variant : lootVariants)
+                    {
+                        Object weightObj = variant.get("weight");
+                        if (weightObj instanceof Number)
+                            totalWeight += ((Number) weightObj).intValue();
+                    }
+                    int choose = new Random().nextInt(totalWeight);
+                    Map<?, ?> selected = null;
+                    int cumulative = 0;
+                    for (Map<?, ?> variant : lootVariants)
+                    {
+                        Object weightObj = variant.get("weight");
+                        int w = weightObj instanceof Number ? ((Number) weightObj).intValue() : 1;
+                        cumulative += w;
+                        if (choose < cumulative)
+                        {
+                            selected = variant;
+                            break;
+                        }
+                    }
+                    if (selected == null)
+                        selected = lootVariants.get(0);
 
-        ItemStack[] contents = new ItemStack[slots];
-        List<Integer> emptySlots = new ArrayList<>();
-        for (int i = 0; i < slots; i++)
-            emptySlots.add(i);
-        Random rnd = new Random();
+                    @SuppressWarnings("unchecked")
+                    List<Map<String, Object>> itemsList = (List<Map<String, Object>>) selected.get("items");
+                    if (itemsList == null)
+                        itemsList = new ArrayList<>();
+                    if (plugin.getDebug())
+                        plugin.getLogger().info("PlaceChestEvent: [DEBUG] Взятый items: Всего=" + itemsList.size());
+                    if (plugin.getDebug())
+                    {
+                        for (int ix = 0; ix < Math.min(5, itemsList.size()); ix++)
+                        {
+                            Map<String, Object> itemMap = itemsList.get(ix);
+                            plugin.getLogger().info("PlaceChestEvent: item[" + ix + "] = " + itemMap);
+                        }
+                    }
 
-        for (Map<String, Object> info : itemsList)
-        {
-            ItemStack item = createItemStackFromMap(info);
-            if (plugin.getDebug())
-                plugin.getLogger().info("DEBUG: ItemStack создан: " + item.getType() + " x" + item.getAmount());
-            int amount = item.getAmount();
-            int maxStack = item.getMaxStackSize();
-            int toGive = amount;
-            while (toGive > 0 && !emptySlots.isEmpty())
-            {
-                int stack = Math.min(toGive, maxStack > 0 ? maxStack : 64);
-                if (emptySlots.isEmpty())
-                {
-                    break; // Защита от редких случаев, чтобы избежать ошибки
-                           // nextInt(0)
-                }
-                int slot = emptySlots.remove(rnd.nextInt(emptySlots.size()));
-                ItemStack stackItem = item.clone();
-                stackItem.setAmount(stack);
-                if (plugin.getDebug())
-                    plugin.getLogger()
-                            .info("DEBUG: Кладём в сундук slot " + slot + ": " + stackItem.getType() + " x" + stack);
-                contents[slot] = stackItem;
-                toGive -= stack;
-            }
-        }
-        for (int i = 0; i < slots; i++)
-        {
-            if (contents[i] == null)
-                contents[i] = null;
-        }
+                    ItemStack[] contents = new ItemStack[slots];
+                    List<Integer> emptySlots = new ArrayList<>();
+                    for (int i = 0; i < slots; i++)
+                        emptySlots.add(i);
+                    Random rnd = new Random();
 
-        // Правильно выбираем блок сундука после смещения!
-        Location chestLoc = location.clone().add(dx, dy, dz);
-        Block block = chestLoc.getBlock();
+                    for (Map<String, Object> info : itemsList)
+                    {
+                        ItemStack item = createItemStackFromMap(info);
+                        if (plugin.getDebug())
+                            plugin.getLogger()
+                                    .info("DEBUG: ItemStack создан: " + item.getType() + " x" + item.getAmount());
+                        int amount = item.getAmount();
+                        int maxStack = item.getMaxStackSize();
+                        int toGive = amount;
+                        while (toGive > 0 && !emptySlots.isEmpty())
+                        {
+                            int stack = Math.min(toGive, maxStack > 0 ? maxStack : 64);
+                            if (emptySlots.isEmpty())
+                            {
+                                break; // Защита от редких случаев, чтобы
+                                       // избежать ошибки
+                                       // nextInt(0)
+                            }
+                            int slot = emptySlots.remove(rnd.nextInt(emptySlots.size()));
+                            ItemStack stackItem = item.clone();
+                            stackItem.setAmount(stack);
+                            if (plugin.getDebug())
+                                plugin.getLogger().info("DEBUG: Кладём в сундук slot " + slot + ": "
+                                        + stackItem.getType() + " x" + stack);
+                            contents[slot] = stackItem;
+                            toGive -= stack;
+                        }
+                    }
+                    for (int i = 0; i < slots; i++)
+                    {
+                        if (contents[i] == null)
+                            contents[i] = null;
+                    }
 
-        // Проверка наличия лаки-блока по PDC чанка
-        org.bukkit.Chunk chunk = block.getChunk();
-        org.bukkit.persistence.PersistentDataContainer chunkPDC = chunk.getPersistentDataContainer();
-        java.util.List<String> luckyCoords = chunkPDC.get(net.ayronix.luckyblocks.LuckyBlockPlugin.LUCKY_BLOCK_KEY,
-                org.bukkit.persistence.PersistentDataType.LIST.strings());
+                    // Правильно выбираем блок сундука после смещения!
+                    Location chestLoc = location.clone().add(dx, dy, dz);
+                    Block block = chestLoc.getBlock();
 
-        if (luckyCoords != null && luckyCoords.stream().anyMatch(entry -> matchesLocation(chestLoc, entry)))
-        {
-            // Разрешаем замену ИСКЛЮЧИТЕЛЬНО если целевая координата -
-            // лакиблок, который сейчас активирован (allow выдан для этой coord)
-            if (!net.ayronix.luckyblocks.LuckyBlockReplaceManager.mayReplace(chestLoc))
-            {
-                plugin.getLogger().warning("[PlaceChestEvent] Попытка подменить чужой лакиблок по координате "
-                        + chestLoc + " — установка сундука запрещена!");
-                return;
-            }
-            // Если замена разрешена — это именно для "своего" лакиблока (allow
-            // выдан только ему)
-            net.ayronix.luckyblocks.LuckyBlockReplaceManager.remove(chestLoc);
-            // Также удаляем координату luckyblock из списка чанка, если она там
-            // есть
-            luckyCoords.removeIf(entry -> matchesLocation(chestLoc, entry));
-            chunkPDC.set(net.ayronix.luckyblocks.LuckyBlockPlugin.LUCKY_BLOCK_KEY,
-                    org.bukkit.persistence.PersistentDataType.LIST.strings(), luckyCoords);
-        }
-        // Откладываем установку сундука на следующий тик, чтобы была
-        // гарантирована возможность заменить лаки-блок!
-        new org.bukkit.scheduler.BukkitRunnable()
-        {
-            @Override
-            public void run()
-            {
-                block.setType(Material.CHEST, false);
+                    // Проверка наличия лаки-блока по PDC чанка
+                    org.bukkit.Chunk chunk = block.getChunk();
+                    org.bukkit.persistence.PersistentDataContainer chunkPDC = chunk.getPersistentDataContainer();
+                    java.util.List<String> luckyCoords = chunkPDC.get(
+                            net.ayronix.luckyblocks.LuckyBlockPlugin.LUCKY_BLOCK_KEY,
+                            org.bukkit.persistence.PersistentDataType.LIST.strings());
 
-                // Гарантируем загрузку чанка
-                chestLoc.getChunk().load();
-
-                Block finalBlock = chestLoc.getBlock();
-                if (finalBlock.getState() instanceof Chest)
-                {
-                    // Откладываем манипуляции с инвентарём сундука на следующий
-                    // тик!
+                    if (luckyCoords != null && luckyCoords.stream().anyMatch(entry -> matchesLocation(chestLoc, entry)))
+                    {
+                        // Разрешаем замену ИСКЛЮЧИТЕЛЬНО если целевая
+                        // координата -
+                        // лакиблок, который сейчас активирован (allow выдан для
+                        // этой coord)
+                        if (!net.ayronix.luckyblocks.LuckyBlockReplaceManager.mayReplace(chestLoc))
+                        {
+                            plugin.getLogger()
+                                    .warning("[PlaceChestEvent] Попытка подменить чужой лакиблок по координате "
+                                            + chestLoc + " — установка сундука запрещена!");
+                            return;
+                        }
+                        // Если замена разрешена — это именно для "своего"
+                        // лакиблока (allow
+                        // выдан только ему)
+                        net.ayronix.luckyblocks.LuckyBlockReplaceManager.remove(chestLoc);
+                        // Также удаляем координату luckyblock из списка чанка,
+                        // если она там
+                        // есть
+                        luckyCoords.removeIf(entry -> matchesLocation(chestLoc, entry));
+                        chunkPDC.set(net.ayronix.luckyblocks.LuckyBlockPlugin.LUCKY_BLOCK_KEY,
+                                org.bukkit.persistence.PersistentDataType.LIST.strings(), luckyCoords);
+                    }
+                    // Откладываем установку сундука на следующий тик, чтобы
+                    // была
+                    // гарантирована возможность заменить лаки-блок!
                     new org.bukkit.scheduler.BukkitRunnable()
                     {
                         @Override
                         public void run()
                         {
-                            // Повторно получаем state у блока сундука после
-                            // update — только так работает во всех новых
-                            // версиях!
-                            Block freshBlock = chestLoc.getBlock();
-                            if (freshBlock.getState() instanceof Chest)
+                            block.setType(Material.CHEST, false);
+
+                            // Гарантируем загрузку чанка
+                            chestLoc.getChunk().load();
+
+                            Block finalBlock = chestLoc.getBlock();
+                            if (finalBlock.getState() instanceof Chest)
                             {
-                                Chest freshChest = (Chest) freshBlock.getState();
-                                if (plugin.getDebug())
+                                // Откладываем манипуляции с инвентарём сундука
+                                // на следующий
+                                // тик!
+                                new org.bukkit.scheduler.BukkitRunnable()
                                 {
-                                    plugin.getLogger()
-                                            .info("[ChestDebug] freshChest: " + freshChest + " at "
-                                                    + freshBlock.getLocation() + ", isPlaced=" + freshBlock.getType()
-                                                    + ", inventorySize=" + freshChest.getInventory().getSize());
-                                }
-
-                                freshChest.setLootTable(null);
-                                freshChest.update(true, true);
-
-                                Inventory inv = freshChest.getInventory();
-                                if (plugin.getDebug())
-                                    plugin.getLogger().info("[ChestDebug] inventory до setItems: "
-                                            + java.util.Arrays.toString(inv.getContents()));
-                                if (plugin.getDebug())
-                                    plugin.getLogger().info("[ChestDebug] contents[] до setItems: "
-                                            + java.util.Arrays.toString(contents));
-
-                                StringBuilder lootList = new StringBuilder();
-                                for (int idx = 0; idx < contents.length; idx++)
-                                {
-                                    if (contents[idx] != null)
+                                    @Override
+                                    public void run()
                                     {
-                                        if (plugin.getDebug())
-                                            plugin.getLogger().info(
-                                                    "[ChestDebug] inv.setItem(" + idx + ", " + contents[idx] + ")");
-                                        inv.setItem(idx, contents[idx]);
-                                        lootList.append(contents[idx].getType().name()).append(" x")
-                                                .append(contents[idx].getAmount()).append(", ");
+                                        // Повторно получаем state у блока
+                                        // сундука после
+                                        // update — только так работает во всех
+                                        // новых
+                                        // версиях!
+                                        Block freshBlock = chestLoc.getBlock();
+                                        if (freshBlock.getState() instanceof Chest)
+                                        {
+                                            Chest freshChest = (Chest) freshBlock.getState();
+                                            if (plugin.getDebug())
+                                            {
+                                                plugin.getLogger()
+                                                        .info("[ChestDebug] freshChest: " + freshChest + " at "
+                                                                + freshBlock.getLocation() + ", isPlaced="
+                                                                + freshBlock.getType() + ", inventorySize="
+                                                                + freshChest.getInventory().getSize());
+                                            }
+
+                                            freshChest.setLootTable(null);
+                                            freshChest.update(true, true);
+
+                                            Inventory inv = freshChest.getInventory();
+                                            if (plugin.getDebug())
+                                                plugin.getLogger().info("[ChestDebug] inventory до setItems: "
+                                                        + java.util.Arrays.toString(inv.getContents()));
+                                            if (plugin.getDebug())
+                                                plugin.getLogger().info("[ChestDebug] contents[] до setItems: "
+                                                        + java.util.Arrays.toString(contents));
+
+                                            StringBuilder lootList = new StringBuilder();
+                                            for (int idx = 0; idx < contents.length; idx++)
+                                            {
+                                                if (contents[idx] != null)
+                                                {
+                                                    if (plugin.getDebug())
+                                                        plugin.getLogger().info("[ChestDebug] inv.setItem(" + idx + ", "
+                                                                + contents[idx] + ")");
+                                                    inv.setItem(idx, contents[idx]);
+                                                    lootList.append(contents[idx].getType().name()).append(" x")
+                                                            .append(contents[idx].getAmount()).append(", ");
+                                                }
+                                            }
+                                            if (plugin.getDebug())
+                                                plugin.getLogger().info("[ChestDebug] inventory после setItems: "
+                                                        + java.util.Arrays.toString(inv.getContents()));
+                                            // freshChest.update(true, true); //
+                                            // УБРАНО для
+                                            // теста причины исчезновения
+                                            // содержимого!
+
+                                            if (plugin.getDebug())
+                                                plugin.getLogger()
+                                                        .info("[ChestDebug] inventory после возможного update: "
+                                                                + java.util.Arrays.toString(inv.getContents()));
+                                            if (plugin.getDebug())
+                                                plugin.getLogger().info("[ChestDebug] contents массив: "
+                                                        + java.util.Arrays.toString(contents));
+                                            if (plugin.getDebug())
+                                                plugin.getLogger().info("[ChestDebug] finalChest=" + freshChest
+                                                        + ", inv=" + inv + ", invSize=" + inv.getSize());
+
+                                            // Сообщение в чат игроку с инфой о
+                                            // луте и
+                                            // координате сундука
+                                            String lootInfoStr = lootList.length() > 2
+                                                    ? lootList.substring(0, lootList.length() - 2)
+                                                    : "нет лута";
+                                            if (plugin.getDebug())
+                                                plugin.getLogger()
+                                                        .info("[ChestDebug] summaryLootInfo at (" + chestLoc.getBlockX()
+                                                                + "," + chestLoc.getBlockY() + ","
+                                                                + chestLoc.getBlockZ() + "): " + lootInfoStr);
+                                        }
                                     }
-                                }
-                                if (plugin.getDebug())
-                                    plugin.getLogger().info("[ChestDebug] inventory после setItems: "
-                                            + java.util.Arrays.toString(inv.getContents()));
-                                // freshChest.update(true, true); // УБРАНО для
-                                // теста причины исчезновения содержимого!
-
-                                if (plugin.getDebug())
-                                    plugin.getLogger().info("[ChestDebug] inventory после возможного update: "
-                                            + java.util.Arrays.toString(inv.getContents()));
-                                if (plugin.getDebug())
-                                    plugin.getLogger().info(
-                                            "[ChestDebug] contents массив: " + java.util.Arrays.toString(contents));
-                                if (plugin.getDebug())
-                                    plugin.getLogger().info("[ChestDebug] finalChest=" + freshChest + ", inv=" + inv
-                                            + ", invSize=" + inv.getSize());
-
-                                // Сообщение в чат игроку с инфой о луте и
-                                // координате сундука
-                                String lootInfoStr = lootList.length() > 2
-                                        ? lootList.substring(0, lootList.length() - 2)
-                                        : "нет лута";
-                                if (plugin.getDebug())
-                                    plugin.getLogger()
-                                            .info("[ChestDebug] summaryLootInfo at (" + chestLoc.getBlockX() + ","
-                                                    + chestLoc.getBlockY() + "," + chestLoc.getBlockZ() + "): "
-                                                    + lootInfoStr);
+                                }.runTaskLater(plugin, 2);
                             }
                         }
-                    }.runTaskLater(plugin, 2);
-                }
-            }
-        }.runTask(plugin);
+                    }.runTask(plugin);
 
-        if (plugin.getDebug())
-        {
-            player.sendMessage("§aУстановлен сундук: " + itemTable + " (" + type + "), заполнено " + slots + " слотов");
-        }
-        // Запуск дополнительных команд (execute: ...)
-        net.ayronix.luckyblocks.EventChainUtil.executeChained(player, location, eventConfig, plugin);
+                    if (plugin.getDebug())
+                    {
+                        player.sendMessage("§aУстановлен сундук: " + itemTable + " (" + type + "), заполнено " + slots
+                                + " слотов");
+                    }
+                    // Запуск дополнительных команд (execute: ...)
+                    net.ayronix.luckyblocks.EventChainUtil.executeChained(player, location, eventConfig, plugin);
+                });
     }
 
     private ItemStack createItemStackFromMap(Map<String, Object> configMap)
