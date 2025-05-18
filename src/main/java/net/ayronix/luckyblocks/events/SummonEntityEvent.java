@@ -22,8 +22,8 @@ public class SummonEntityEvent implements ICustomEvent
         if (spawnLoc == null)
             return;
 
-        String baseCommand = String.format("summon %s %f %f %f", entityType, spawnLoc.getX(), spawnLoc.getY(),
-                spawnLoc.getZ());
+        String baseCommand = String.format(java.util.Locale.US, "summon %s %f %f %f", entityType, spawnLoc.getX(),
+                spawnLoc.getY(), spawnLoc.getZ());
 
         for (int i = 0; i < count; i++)
         {

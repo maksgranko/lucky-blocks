@@ -167,6 +167,16 @@ public class LuckyBlockCommand implements CommandExecutor
                 } else if (sender instanceof Player player)
                 {
                     targetPlayers.add(player);
+                } else if (args.length >= 5)
+                {
+                    // Разрешить запуск из консоли, если передана цель
+                    // targetPlayers уже заполнен выше (в блоке args.length >=
+                    // 5)
+                    if (targetPlayers.isEmpty())
+                    {
+                        sender.sendMessage(ChatColor.RED + "Не удалось определить игрока для выдачи лакиблока.");
+                        return true;
+                    }
                 } else
                 {
                     sender.sendMessage(ChatColor.RED + "Только игрок или команда с указанием игрока!");

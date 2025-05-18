@@ -456,10 +456,11 @@ types:
             weight: 16
             material: OBSIDIAN
             relative-coords: { x: 0, y: 1, z: 0 }
-          COMMAND_EXEC:
+          SUMMON:
             enabled: true
-            weight: 19
-            command: "summon zombie"
+            weight: 20
+            entity: "zombie"
+            count: 3
           PLACE_BLOCK:
             enabled: true
             weight: 22
@@ -509,10 +510,11 @@ types:
             enabled: true
             weight: 20
             command: "effect give %player% weakness 22 2"
-          COMMAND_EXEC:
+          SUMMON:
             enabled: true
             weight: 18
-            command: "summon enderman"
+            entity: "enderman"
+            count: 2
           PLACE_CHEST:
             enabled: true
             weight: 30
@@ -575,10 +577,11 @@ types:
             effect: LUCK
             amplifier: 2
             duration: 60
-          COMMAND_EXEC:
+          SUMMON:
             enabled: true
             weight: 50
-            command: "summon chicken"
+            entity: "chicken"
+            count: 1
           PLACE_BLOCK:
             enabled: true
             weight: 75
@@ -664,10 +667,11 @@ types:
             weight: 12
             item-table: neutral_loot_2
             relative-coords: { x: 0, y: 0, z: 0 }
-          COMMAND_EXEC:
+          SUMMON:
             enabled: true
             weight: 6
-            command: "summon rabbit"
+            entity: "rabbit"
+            count: 3
           GIVE_EFFECT:
             enabled: true
             weight: 7
