@@ -59,14 +59,16 @@ public class PlaceChestEvent implements ICustomEvent
                     File chestsFile = new File(plugin.getDataFolder(), "chests.yml");
                     if (!chestsFile.exists())
                     {
-                        player.sendMessage("§cНе найден chests.yml.");
+                        if (plugin.getDebug())
+                            player.sendMessage("§cНе найден chests.yml.");
                         return;
                     }
                     YamlConfiguration chests = YamlConfiguration.loadConfiguration(chestsFile);
                     ConfigurationSection tableSection = chests.getConfigurationSection(type + "." + itemTable);
                     if (tableSection == null)
                     {
-                        player.sendMessage("§cВ категории \"" + type + "\" не найдена таблица " + itemTable);
+                        if (plugin.getDebug())
+                            player.sendMessage("§cВ категории \"" + type + "\" не найдена таблица " + itemTable);
                         return;
                     }
 

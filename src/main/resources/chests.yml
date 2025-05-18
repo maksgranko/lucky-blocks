@@ -13,13 +13,37 @@ positive:
             amount: 15
           - item: COAL
             amount: 20
-        weight: 60
+        weight: 50
+      - items:
+          - item: GOLDEN_CARROT
+            amount: 5
+          - item: ENDER_PEARL
+            amount: 2
+        weight: 30
+      - items:
+          - item: GOLDEN_APPLE
+            amount: 1
+          - item: DIAMOND_AXE
+            amount: 1
+        weight: 15
+      - items:
+          - item: EXPERIENCE_BOTTLE
+            amount: 16
+          - item: BOOK
+            amount: 3
+        weight: 25
+      - items:
+          - item: EMERALD
+            amount: 4
+          - item: IRON_INGOT
+            amount: 10
+        weight: 35
       - items:
           - item: BREAD
             amount: 10
           - item: COOKED_BEEF
             amount: 5
-        weight: 50
+        weight: 40
   positive_loot_2:
     slots: 27
     loot:
@@ -31,8 +55,12 @@ positive:
         weight: 30
       - items:
           - item: GOLDEN_APPLE
+            amount: 2
+        weight: 16
+      - items:
+          - item: TOTEM_OF_UNDYING
             amount: 1
-        weight: 20
+        weight: 6
       - items:
           - item: DIAMOND_PICKAXE
             name: "&bЗачарованная Кирка"
@@ -40,7 +68,17 @@ positive:
               - attribute: GENERIC_ATTACK_DAMAGE
                 amount: 5
                 operation: ADD_NUMBER
+        weight: 5
+      - items:
+          - item: BOW
+            amount: 1
+          - item: ARROW
+            amount: 32
         weight: 10
+      - items:
+          - item: EXPERIENCE_BOTTLE
+            amount: 30
+        weight: 13
 
 negative:
   negative_loot_1:
@@ -51,17 +89,47 @@ negative:
             amount: 64
           - item: GRAVEL
             amount: 64
-        weight: 50
+        weight: 38
       - items:
           - item: ROTTEN_FLESH
-            amount: 10
+            amount: 20
           - item: SPIDER_EYE
-            amount: 5
-        weight: 40
+            amount: 10
+        weight: 20
       - items:
           - item: POISONOUS_POTATO
+            amount: 5
+          - item: DEAD_BUSH
+            amount: 5
+        weight: 18
+      - items:
+          - item: LEATHER_BOOTS
+            amount: 1
+          - item: PUFFERFISH
+            amount: 2
+        weight: 10
+      - items:
+          - item: SAND
+            amount: 32
+          - item: GRAVEL
+            amount: 32
+        weight: 8
+      - items:
+          - item: SNOWBALL
+            amount: 16
+        weight: 6
+      - items:
+          - item: WOODEN_SHOVEL
+            amount: 1
+          - item: WOODEN_SWORD
+            amount: 1
+        weight: 5
+      - items:
+          - item: COAL
             amount: 3
-        weight: 30
+          - item: STICK
+            amount: 5
+        weight: 5
 
 neutral:
   neutral_loot_1:
@@ -72,35 +140,69 @@ neutral:
             amount: 32
           - item: COBBLESTONE
             amount: 32
-        weight: 50
+        weight: 28
       - items:
           - item: APPLE
-            amount: 5
+            amount: 8
           - item: CARROT
-            amount: 5
-        weight: 40
+            amount: 7
+        weight: 18
       - items:
           - item: STICK
-            amount: 10
-        weight: 30
+            amount: 16
+        weight: 12
+      - items:
+          - item: COOKED_CHICKEN
+            amount: 6
+        weight: 10
+      - items:
+          - item: FISHING_ROD
+            amount: 1
+        weight: 8
+      - items:
+          - item: LEATHER
+            amount: 2
+        weight: 7
+      - items:
+          - item: WOODEN_PICKAXE
+            amount: 1
+          - item: COAL
+            amount: 4
+        weight: 5
   neutral_loot_2:
     slots: 27
     loot:
       - items:
           - item: IRON_INGOT
-            amount: 1
-          - item: COAL
             amount: 3
-        weight: 40
+          - item: COAL
+            amount: 6
+        weight: 22
       - items:
           - item: REDSTONE
-            amount: 5
+            amount: 11
           - item: GUNPOWDER
-            amount: 3
-        weight: 30
+            amount: 6
+        weight: 18
       - items:
           - item: BONE
-            amount: 5
+            amount: 10
           - item: STRING
+            amount: 8
+        weight: 14
+      - items:
+          - item: BREAD
             amount: 5
-        weight: 30
+        weight: 10
+      - items:
+          - item: OAK_SAPLING
+            amount: 4
+        weight: 6
+      - items:
+          - item: CLAY_BALL
+            amount: 8
+        weight: 5
+      - items:
+          - item: BRICK
+            amount: 3
+        weight: 5

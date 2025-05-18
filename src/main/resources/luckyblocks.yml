@@ -7,43 +7,168 @@ types:
       1:
         display-name: "&aПозитивный ЛакиБлок &eI уровня"
         events:
+          EXPLOSION:
+            enabled: true
+            weight: 3
+            power: 2.0
+            delay: 2
           DROP_ITEM:
             - enabled: true
-              weight: 60
+              weight: 45
+              items:
+                - item: WOODEN_SWORD
+                  amount: 1
+            - enabled: true
+              weight: 45
+              items:
+                - item: WOODEN_SHOVEL
+                  amount: 1
+            - enabled: true
+              weight: 45
+              items:
+                - item: WOODEN_PICKAXE
+                  amount: 1
+            - enabled: true
+              weight: 45
+              items:
+                - item: WOODEN_AXE
+                  amount: 1
+            - enabled: true
+              weight: 30
+              items:
+                - item: WOODEN_HELMET
+                  amount: 1
+            - enabled: true
+              weight: 30
+              items:
+                - item: WOODEN_CHESTPLATE
+                  amount: 1
+            - enabled: true
+              weight: 30
+              items:
+                - item: WOODEN_LEGGINGS
+                  amount: 1
+            - enabled: true
+              weight: 30
+              items:
+                - item: WOODEN_BOOTS
+                  amount: 1
+            - enabled: true
+              weight: 30
+              items:
+                - item: STONE_SWORD
+                  amount: 1
+            - enabled: true
+              weight: 30
+              items:
+                - item: STONE_SHOVEL
+                  amount: 1
+            - enabled: true
+              weight: 30
+              items:
+                - item: STONE_PICKAXE
+                  amount: 1
+            - enabled: true
+              weight: 30
+              items:
+                - item: STONE_AXE
+                  amount: 1
+            - enabled: true
+              weight: 16
+              items:
+                - item: STONE_HELMET
+                  amount: 1
+            - enabled: true
+              weight: 16
+              items:
+                - item: STONE_CHESTPLATE
+                  amount: 1
+            - enabled: true
+              weight: 16
+              items:
+                - item: STONE_LEGGINGS
+                  amount: 1
+            - enabled: true
+              weight: 16
+              items:
+                - item: STONE_BOOTS
+                  amount: 1
+            - enabled: true
+              weight: 10
+              items:
+                - item: GOLDEN_SWORD
+                  amount: 1
+            - enabled: true
+              weight: 10
+              items:
+                - item: GOLDEN_SHOVEL
+                  amount: 1
+            - enabled: true
+              weight: 10
+              items:
+                - item: GOLDEN_PICKAXE
+                  amount: 1
+            - enabled: true
+              weight: 10
+              items:
+                - item: GOLDEN_AXE
+                  amount: 1
+            - enabled: true
+              weight: 7
+              items:
+                - item: GOLDEN_HELMET
+                  amount: 1
+            - enabled: true
+              weight: 7
+              items:
+                - item: GOLDEN_CHESTPLATE
+                  amount: 1
+            - enabled: true
+              weight: 7
+              items:
+                - item: GOLDEN_LEGGINGS
+                  amount: 1
+            - enabled: true
+              weight: 7
+              items:
+                - item: GOLDEN_BOOTS
+                  amount: 1
+            - enabled: true
+              weight: 153
               items:
                 - item: IRON_INGOT
                   amount: 5
             - enabled: true
-              weight: 50
+              weight: 131
               items:
                 - item: GOLD_NUGGET
                   amount: 10
             - enabled: true
-              weight: 30
+              weight: 77
               items:
                 - item: COAL
                   amount: 8
             - enabled: true
-              weight: 23
+              weight: 50
               items:
                 - item: GOLD_INGOT
                   amount: 2
                 - item: IRON_NUGGET
                   amount: 8
             - enabled: true
-              weight: 15
+              weight: 54
               items:
                 - item: EMERALD
                   amount: 1
           HEAL:
             enabled: true
-            weight: 80
+            weight: 174
             amount: 5
             effects:
               - REGENERATION
           PLACE_BLOCK:
             enabled: true
-            weight: 60
+            weight: 131
             blocks:
               - material: OAK_LOG
                 relative-coords: { x: 0, y: 1, z: 0 }
@@ -53,21 +178,66 @@ types:
                 relative-coords: { x: 0, y: 0, z: 1 }
           GIVE_EFFECT:
             enabled: true
-            weight: 37
+            weight: 81
             effect: ABSORPTION
             amplifier: 2
             duration: 120
           COMMAND_EXEC:
             enabled: true
-            weight: 24
+            weight: 52
             command: "give %player% cooked_beef 4"
           DEFAULT:
             enabled: true
-            weight: 40
+            weight: 87
       2:
         display-name: "&aПозитивный ЛакиБлок &eII уровня"
         events:
+          EXPLOSION:
+            enabled: true
+            weight: 5
+            power: 2.0
+            delay: 2
           DROP_ITEM:
+            - enabled: true
+              weight: 38
+              items:
+                - item: IRON_SWORD
+                  amount: 1
+            - enabled: true
+              weight: 32
+              items:
+                - item: IRON_SHOVEL
+                  amount: 1
+            - enabled: true
+              weight: 32
+              items:
+                - item: IRON_PICKAXE
+                  amount: 1
+            - enabled: true
+              weight: 32
+              items:
+                - item: IRON_AXE
+                  amount: 1
+            - enabled: true
+              weight: 20
+              items:
+                - item: IRON_HELMET
+                  amount: 1
+            - enabled: true
+              weight: 20
+              items:
+                - item: IRON_CHESTPLATE
+                  amount: 1
+            - enabled: true
+              weight: 20
+              items:
+                - item: IRON_LEGGINGS
+                  amount: 1
+            - enabled: true
+              weight: 20
+              items:
+                - item: IRON_BOOTS
+                  amount: 1
             - enabled: true
               weight: 46
               items:
@@ -78,11 +248,6 @@ types:
               items:
                 - item: AMETHYST_SHARD
                   amount: 3
-            - enabled: true
-              weight: 19
-              items:
-                - item: DIAMOND
-                  amount: 1
             - enabled: true
               weight: 20
               items:
@@ -125,21 +290,51 @@ types:
       3:
         display-name: "&aПозитивный ЛакиБлок &eIII уровня"
         events:
+          EXPLOSION:
+            enabled: true
+            weight: 5
+            power: 2.0
+            delay: 2
           DROP_ITEM:
             - enabled: true
-              weight: 16
+              weight: 10
               items:
-                - item: DIAMOND
-                  amount: 2
+                - item: DIAMOND_SWORD
+                  amount: 1
             - enabled: true
-              weight: 20
+              weight: 8
               items:
-                - item: EMERALD
-                  amount: 5
+                - item: DIAMOND_PICKAXE
+                  amount: 1
+            - enabled: true
+              weight: 8
+              items:
+                - item: DIAMOND_AXE
+                  amount: 1
             - enabled: true
               weight: 7
               items:
-                - item: NETHER_STAR
+                - item: DIAMOND_SHOVEL
+                  amount: 1
+            - enabled: true
+              weight: 7
+              items:
+                - item: DIAMOND_HELMET
+                  amount: 1
+            - enabled: true
+              weight: 7
+              items:
+                - item: DIAMOND_CHESTPLATE
+                  amount: 1
+            - enabled: true
+              weight: 7
+              items:
+                - item: DIAMOND_LEGGINGS
+                  amount: 1
+            - enabled: true
+              weight: 7
+              items:
+                - item: DIAMOND_BOOTS
                   amount: 1
             - enabled: true
               weight: 12
@@ -151,6 +346,21 @@ types:
               items:
                 - item: BLAZE_ROD
                   amount: 3
+            - enabled: true
+              weight: 20
+              items:
+                - item: EMERALD
+                  amount: 5
+            - enabled: true
+              weight: 30
+              items:
+                - item: NETHER_STAR
+                  amount: 1
+            - enabled: true
+              weight: 6
+              items:
+                - item: ENDER_PEARL
+                  amount: 2
           HEAL:
             enabled: true
             weight: 40
@@ -190,39 +400,39 @@ types:
         events:
           EXPLOSION:
             enabled: true
-            weight: 80
+            weight: 60
             power: 2.0
-            animation: particles
             delay: 2
+            # animation: particles
           DROP_ITEM:
             - enabled: true
-              weight: 37
+              weight: 155
               items:
                 - item: DIRT
                   amount: 10
             - enabled: true
-              weight: 29
+              weight: 122
               items:
                 - item: GRAVEL
                   amount: 8
             - enabled: true
-              weight: 12
+              weight: 50
               items:
                 - item: FLINT
                   amount: 4
             - enabled: true
-              weight: 13
+              weight: 54
               items:
                 - item: DEAD_BUSH
                   amount: 7
             - enabled: true
-              weight: 7
+              weight: 29
               items:
                 - item: LEATHER_BOOTS
                   amount: 1
           PLACE_BLOCK:
             enabled: true
-            weight: 30
+            weight: 125
             blocks:
               - material: COBWEB
                 relative-coords: { x: 0, y: 1, z: 0 }
@@ -247,8 +457,8 @@ types:
         events:
           EXPLOSION:
             enabled: true
-            weight: 130
-            power: 4.0
+            weight: 80
+            power: 2.0
           DROP_ITEM:
             - enabled: true
               weight: 21
@@ -300,8 +510,8 @@ types:
         events:
           EXPLOSION:
             enabled: true
-            weight: 100
-            power: 7.0
+            weight: 70
+            power: 3.0
           DROP_ITEM:
             - enabled: true
               weight: 11
@@ -364,47 +574,47 @@ types:
         events:
           DROP_ITEM:
             - enabled: true
-              weight: 41
+              weight: 180
               items:
                 - item: STONE
                   amount: 8
             - enabled: true
-              weight: 38
+              weight: 190
               items:
                 - item: DIRT
                   amount: 8
             - enabled: true
-              weight: 30
+              weight: 135
               items:
                 - item: COBBLESTONE
                   amount: 8
             - enabled: true
-              weight: 16
+              weight: 110
               items:
                 - item: MELON
                   amount: 5
             - enabled: true
-              weight: 5
+              weight: 40
               items:
                 - item: GOLD_NUGGET
                   amount: 2
           HEAL:
             enabled: true
-            weight: 24
+            weight: 110
             amount: 4
           GIVE_EFFECT:
             enabled: true
-            weight: 20
+            weight: 110
             effect: LUCK
             amplifier: 2
             duration: 60
           COMMAND_EXEC:
             enabled: true
-            weight: 8
+            weight: 50
             command: "summon chicken"
           PLACE_BLOCK:
             enabled: true
-            weight: 17
+            weight: 75
             blocks:
               - material: MELON
                 relative-coords: { x: 0, y: 1, z: 0 }
