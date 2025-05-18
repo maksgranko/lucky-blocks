@@ -130,4 +130,137 @@ public class ConfigManager
     {
         return config;
     }
+
+    public LuckyBlockPlugin getPlugin()
+    {
+        return plugin;
+    }
+
+    /**
+     * Получить все секции событий данного уровня для типа, с учётом
+     * require-наследования. Возвращает список ConfigurationSection (может быть
+     * пустым, если нет событий). Дубликаты НЕ фильтрует — порядок: сначала
+     * свои, потом по порядку require.
+     */
+    public java.util.List<ConfigurationSection> getEffectiveEventSections(String type, int level,
+            java.util.Set<String> visited)
+    {
+        if (visited.contains(type))
+        {
+            plugin.getLogger()
+                    .severe("Обнаружена циклическая зависимость require для типа: " + type + ". Конфиг сломан!");
+            return Collections.emptyList();
+        }
+        visited.add(type);
+
+        plugin.getLogger()
+                .info("getEffectiveEventSections для типа: " + type + ", уровень: " + level + ", посещено: " + visited);
+
+        java.util.List<ConfigurationSection> result = new java.util.ArrayList<>();
+        ConfigurationSection events = getEventsSection(type, level);
+        if (events != null)
+        {
+            for (String key : events.getKeys(false))
+            {
+                Object value = events.get(key);
+
+                // Если значение - список (несколько событий такого типа)
+                if (value instanceof java.util.List<?> cfgList)
+                {
+                    int idx = 0;
+                    for (Object obj : cfgList)
+                    {
+                        if (obj instanceof java.util.Map<?, ?> map)
+                        {
+                            // Преобразуем map в отдельную секцию для унификации
+                            // с ConfigurationSection
+                            org.bukkit.configuration.MemoryConfiguration tempSection = new org.bukkit.configuration.MemoryConfiguration();
+                            map.forEach((k, v) -> tempSection.set(String.valueOf(k), v));
+                            tempSection.set("__event_key__", key);
+                            tempSection.set("__event_index__", idx);
+                            result.add(tempSection);
+                        }
+                        idx++;
+                    }
+                }
+                // Если значение - ConfigurationSection (одиночное событие)
+                else if (value instanceof ConfigurationSection ev)
+                {
+                    ev.set("__event_key__", key);
+                    ev.set("__event_index__", 0);
+                    result.add(ev);
+                }
+                // Если значение - карта, но не секция (бывает при yaml)
+                else if (value instanceof java.util.Map<?, ?> map)
+                {
+                    org.bukkit.configuration.MemoryConfiguration tempSection = new org.bukkit.configuration.MemoryConfiguration();
+                    map.forEach((k, v) -> tempSection.set(String.valueOf(k), v));
+                    tempSection.set("__event_key__", key);
+                    tempSection.set("__event_index__", 0);
+                    result.add(tempSection);
+                }
+            }
+        }
+        // Поддержка одиночных require и списковых
+        java.util.List<String> requires;
+        Object requireObj = config.get("types." + type + ".require");
+        if (requireObj instanceof java.util.List<?> reqList)
+        {
+            requires = new java.util.ArrayList<>();
+            for (Object o : reqList)
+            {
+                if (o != null)
+                    requires.add(String.valueOf(o));
+            }
+        } else if (requireObj instanceof String str)
+        {
+            requires = java.util.Collections.singletonList(str);
+        } else
+        {
+            requires = java.util.Collections.emptyList();
+        }
+        for (String parent : requires)
+        {
+            result.addAll(getEffectiveEventSections(parent, level, visited));
+        }
+        visited.remove(type);
+        plugin.getLogger().info("getEffectiveEventSections для типа: " + type + ", уровень: " + level
+                + ", итоговый список событий: " + result.size());
+        return result;
+    }
+
+    /**
+     * Получить список всех доступных уровней для типа с учётом
+     * require-наследования. Возвращает уникальный список всех номеров уровней.
+     */
+    public java.util.Set<Integer> getEffectiveLevels(String type, java.util.Set<String> visited)
+    {
+        if (visited.contains(type))
+        {
+            plugin.getLogger()
+                    .severe("Обнаружена циклическая зависимость require для типа: " + type + ". Конфиг сломан!");
+            return Collections.emptySet();
+        }
+        visited.add(type);
+
+        java.util.Set<Integer> levels = new java.util.HashSet<>();
+        ConfigurationSection levelsSection = config.getConfigurationSection("types." + type + ".levels");
+        if (levelsSection != null)
+        {
+            for (String key : levelsSection.getKeys(false))
+            {
+                if (key.matches("\\d+"))
+                {
+                    levels.add(Integer.parseInt(key));
+                }
+            }
+        }
+        java.util.List<String> requires = config.getStringList("types." + type + ".require");
+        for (String parent : requires)
+        {
+            levels.addAll(getEffectiveLevels(parent, visited));
+        }
+        visited.remove(type);
+        return levels;
+    }
 }

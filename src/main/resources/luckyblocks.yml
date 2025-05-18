@@ -5,125 +5,79 @@ types:
       custom-model-data: 1001
     levels:
       1:
-        display-name: "&aПоложительный ЛакиБлок &eI уровня"
+        display-name: "&aПозитивный ЛакиБлок &eI уровня"
         events:
-          EXPLOSION:
-            enabled: false
-            weight: 100
-            power: 4.0
           DROP_ITEM:
-            - enabled: true
-              weight: 500
-              items:
-                - item: GOLDEN_APPLE
-                  custom-model-data: 2
-                  name: "Золотое яблоко"
-                  lore: "Лучший ужин!"
-                  amount: 2
-                  attributes:
-                    - attribute: GENERIC_ATTACK_DAMAGE
-                      amount: 4
-                      operation: ADD_NUMBER
-                - item: DIAMOND
-                  amount: 1
-                  name: "Один алмаз"
-            - enabled: true
-              weight: 400
-              item: DIAMOND
-              amount: 1
-              name: "Один алмаз"
+            enabled: true
+            weight: 600
+            items:
+              - item: IRON_INGOT
+                amount: 5
+              - item: COAL
+                amount: 10
+          HEAL:
+            enabled: true
+            weight: 200
+            amount: 4
           PLACE_BLOCK:
             enabled: true
             weight: 100
             blocks:
-              - material: DIAMOND_BLOCK
-                custom-model-data: 1
+              - material: OAK_LOG
                 relative-coords: { x: 0, y: 1, z: 0 }
-              - material: EMERALD_BLOCK
-                relative-coords: { x: 2, y: 0, z: 0 }
-          PLACE_CHEST:
-            enabled: true
-            weight: 50
-            item-table: main_loot
-            relative-coords: { x: 0, y: 0, z: 0 }
-      2:
-        display-name: "&aПоложительный ЛакиБлок &eII уровня"
-        events:
-          EXPLOSION:
-            enabled: true
-            weight: 200
-            power: 6.0
-          DROP_ITEM:
-            enabled: true
-            weight: 800
-            item: DIAMOND
-            amount: 3
-          PLACE_BLOCK:
-            enabled: false
-            weight: 0
-          PLACE_CHEST:
+          DEFAULT:
             enabled: true
             weight: 100
-            item-table: main_loot
-            relative-coords: { x: 0, y: 0, z: 1 }
-      3:
-        display-name: "&aПоложительный ЛакиБлок &eIII уровня"
+      2:
+        display-name: "&aПозитивный ЛакиБлок &eII уровня"
         events:
-          EXPLOSION:
-            enabled: true
-            weight: 500
-            power: 8.0
           DROP_ITEM:
             enabled: true
             weight: 500
-            item: ENCHANTED_GOLDEN_APPLE
-            amount: 1
-          PLACE_BLOCK:
-            enabled: true
-            weight: 50
-            material: EMERALD_BLOCK
-            relative-coords: { x: 0, y: 2, z: 0 }
-          PLACE_CHEST:
-            enabled: false
-            weight: 0
-      4:
-        display-name: "&aПоложительный ЛакиБлок &eIV уровня"
-        events:
-          EXPLOSION:
-            enabled: true
-            weight: 400
-            power: 10.0
-          DROP_ITEM:
-            enabled: true
-            weight: 600
-            item: GOLD_INGOT
-            amount: 64
-          PLACE_BLOCK:
-            enabled: false
-            weight: 0
-          PLACE_CHEST:
-            enabled: true
-            weight: 30
-            item-table: main_loot
-            relative-coords: { x: 0, y: 0, z: 0 }
-      5:
-        display-name: "&aПоложительный ЛакиБлок &eV уровня"
-        events:
-          EXPLOSION:
+            items:
+              - item: GOLD_INGOT
+                amount: 3
+              - item: LAPIS_LAZULI
+                amount: 8
+          HEAL:
             enabled: true
             weight: 300
-            power: 15.0
+            amount: 8
+            effects:
+              - REGENERATION
+          PLACE_CHEST:
+            enabled: true
+            weight: 200
+            item-table: positive_loot_1
+            relative-coords: { x: 0, y: 0, z: 0 }
+      3:
+        display-name: "&aПозитивный ЛакиБлок &eIII уровня"
+        events:
           DROP_ITEM:
             enabled: true
-            weight: 700
-            item: DIAMOND_BLOCK
-            amount: 5
-          PLACE_BLOCK:
-            enabled: false
-            weight: 0
+            weight: 400
+            items:
+              - item: DIAMOND
+                amount: 2
+              - item: EMERALD
+                amount: 3
+          HEAL:
+            enabled: true
+            weight: 200
+            amount: 12
+            effects:
+              - REGENERATION
+              - ABSORPTION
           PLACE_CHEST:
-            enabled: false
-            weight: 0
+            enabled: true
+            weight: 300
+            item-table: positive_loot_2
+            relative-coords: { x: 0, y: 0, z: 0 }
+          COMMAND_EXEC:
+            enabled: true
+            weight: 100
+            command: "give %player% experience_bottle 5"
+
   negative:
     item:
       material: SPONGE
@@ -134,91 +88,148 @@ types:
         events:
           EXPLOSION:
             enabled: true
-            weight: 800
-            power: 10.0
+            weight: 500
+            power: 2.0
           DROP_ITEM:
             enabled: true
-            weight: 200
-            item: STICK
-            custom-model-data: 1
-            name: "Палка"
-            lore: "Крутая палка"
-            amount: 64
+            weight: 300
+            items:
+              - item: DIRT
+                amount: 5
+              - item: GRAVEL
+                amount: 5
           PLACE_BLOCK:
             enabled: true
-            weight: 50
-            material: ANVIL
-            relative-coords: { x: 0, y: 4, z: 0 }
-          PLACE_CHEST:
-            enabled: false
-            weight: 0
+            weight: 200
+            blocks:
+              - material: COBWEB
+                relative-coords: { x: 0, y: 1, z: 0 }
+              - material: COBWEB
+                relative-coords: { x: 1, y: 0, z: 0 }
+              - material: COBWEB
+                relative-coords: { x: -1, y: 0, z: 0 }
+              - material: COBWEB
+                relative-coords: { x: 0, y: -1, z: 0 }
+              - material: COBWEB
+                relative-coords: { x: 0, y: 0, z: 1 }
+              - material: COBWEB
+                relative-coords: { x: 0, y: 0, z: -1 }
       2:
         display-name: "&cНегативный ЛакиБлок &eII уровня"
         events:
           EXPLOSION:
             enabled: true
-            weight: 900
-            power: 14.0
-          DROP_ITEM:
-            enabled: false
-            weight: 100
+            weight: 600
+            power: 4.0
+          PLAYER_COMMAND:
+            enabled: true
+            weight: 300
+            command: "effect give %player% slowness 10 2"
           PLACE_BLOCK:
-            enabled: false
-            weight: 0
-          PLACE_CHEST:
-            enabled: false
-            weight: 0
+            enabled: true
+            weight: 100
+            material: OBSIDIAN
+            relative-coords: { x: 0, y: 1, z: 0 }
       3:
         display-name: "&cНегативный ЛакиБлок &eIII уровня"
         events:
           EXPLOSION:
             enabled: true
-            weight: 1000
-            power: 20.0
-          DROP_ITEM:
-            enabled: false
-            weight: 0
-          PLACE_BLOCK:
-            enabled: false
-            weight: 0
+            weight: 700
+            power: 6.0
+          PLAYER_COMMAND:
+            enabled: true
+            weight: 200
+            command: "effect give %player% weakness 15 1"
           PLACE_CHEST:
             enabled: true
-            weight: 20
-            item-table: bad_loot
-            relative-coords: { x: 1, y: 1, z: 1 }
-      4:
-        display-name: "&cНегативный ЛакиБлок &eIV уровня"
-        events:
-          EXPLOSION:
-            enabled: true
-            weight: 1100
-            power: 25.0
-          DROP_ITEM:
-            enabled: false
-            weight: 0
-          PLACE_BLOCK:
-            enabled: false
-            weight: 0
-          PLACE_CHEST:
-            enabled: true
-            weight: 20
-            item-table: bad_loot
+            weight: 100
+            item-table: negative_loot_1
             relative-coords: { x: 0, y: 0, z: 0 }
-      5:
-        display-name: "&cНегативный ЛакиБлок &eV уровня"
+
+  neutral:
+    require: [positive, negative]
+    item:
+      material: SPONGE
+      custom-model-data: 1003
+    levels:
+      1:
+        display-name: "&fНейтральный ЛакиБлок &eI уровня"
         events:
+          DROP_ITEM:
+            enabled: true
+            weight: 400
+            items:
+              - item: STONE
+                amount: 16
+              - item: DIRT
+                amount: 16
           EXPLOSION:
             enabled: true
-            weight: 1200
-            power: 30.0
+            weight: 300
+            power: 1.0
+          HEAL:
+            enabled: true
+            weight: 200
+            amount: 2
+          DEFAULT:
+            enabled: true
+            weight: 100
+      2:
+        display-name: "&fНейтральный ЛакиБлок &eII уровня"
+        events:
           DROP_ITEM:
-            enabled: false
-            weight: 0
+            enabled: true
+            weight: 300
+            items:
+              - item: COBBLESTONE
+                amount: 32
+              - item: SAND
+                amount: 32
           PLACE_BLOCK:
-            enabled: false
-            weight: 0
+            enabled: true
+            weight: 300
+            blocks:
+              - material: GLASS
+                relative-coords: { x: 0, y: 1, z: 0 }
+              - material: GLASS
+                relative-coords: { x: 1, y: 0, z: 0 }
+              - material: GLASS
+                relative-coords: { x: -1, y: 0, z: 0 }
+              - material: GLASS
+                relative-coords: { x: 0, y: 0, z: 1 }
+              - material: GLASS
+                relative-coords: { x: 0, y: 0, z: -1 }
           PLACE_CHEST:
-            enabled: false
-            weight: 0
-  # Аналогично стандарт подробного формата для остальных типов...
-  # Пример для diamond, food, medical, weapon, neutral — оставить DROP_FOOD → DROP_ITEM, добавить новые события по аналогии выше или пока оставить без изменений, если такие события не критичны для них.
+            enabled: true
+            weight: 200
+            item-table: neutral_loot_1
+            relative-coords: { x: 0, y: 0, z: 0 }
+          PLAYER_COMMAND:
+            enabled: true
+            weight: 200
+            command: "say Что-то произошло!"
+      3:
+        display-name: "&fНейтральный ЛакиБлок &eIII уровня"
+        events:
+          DROP_ITEM:
+            enabled: true
+            weight: 200
+            items:
+              - item: IRON_INGOT
+                amount: 2
+              - item: COAL
+                amount: 5
+          EXPLOSION:
+            enabled: true
+            weight: 200
+            power: 3.0
+          PLACE_CHEST:
+            enabled: true
+            weight: 300
+            item-table: neutral_loot_2
+            relative-coords: { x: 0, y: 0, z: 0 }
+          COMMAND_EXEC:
+            enabled: true
+            weight: 300
+            command: "summon zombie"

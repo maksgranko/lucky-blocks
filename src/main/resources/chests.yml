@@ -1,47 +1,106 @@
 positive:
-  main_loot:
+  positive_loot_1:
     slots: 27
     loot:
       - items:
           - item: DIAMOND
-            amount: 5
-            name: "§bАлмаз (loot)"
-          - item: STICK
-            amount: 10
-            name: "§6Супер палка (loot)"
-            custom-model-data: 1
-            lore: |
-              &7Палка из сундука
-              &bМожет быть продана жителю!
-            attributes:
-              - attribute: GENERIC_ATTACK_DAMAGE
-                amount: 2
-                operation: ADD_NUMBER
-          - item: GOLDEN_APPLE
-            amount: 1
-            name: "§eЗолотое яблоко"
-          - item: PAPER
-            amount: 1
-            name: "&aБумажка as EMERALD"
-            custom-model-data: 1000
-            lore: "&7Это пример предмета с нестандартным item/material, который будет отображаться как бумага."
-        weight: 50
+            amount: 3
+          - item: GOLD_INGOT
+            amount: 8
+        weight: 40
       - items:
-          - item: DIRT
-            amount: 64
-            name: "§7Грязь выиграна честно!"
-        weight: 10
-
-negative:
-  bad_loot:
+          - item: IRON_INGOT
+            amount: 15
+          - item: COAL
+            amount: 20
+        weight: 60
+      - items:
+          - item: BREAD
+            amount: 10
+          - item: COOKED_BEEF
+            amount: 5
+        weight: 50
+  positive_loot_2:
     slots: 27
     loot:
       - items:
-          - item: STICK
+          - item: EMERALD
+            amount: 5
+          - item: DIAMOND
             amount: 1
-            name: "§cПлохая палка"
-            custom-model-data: 3
+        weight: 30
+      - items:
+          - item: GOLDEN_APPLE
+            amount: 1
+        weight: 20
+      - items:
+          - item: DIAMOND_PICKAXE
+            name: "&bЗачарованная Кирка"
+            attributes:
+              - attribute: GENERIC_ATTACK_DAMAGE
+                amount: 5
+                operation: ADD_NUMBER
+        weight: 10
+
+negative:
+  negative_loot_1:
+    slots: 27
+    loot:
       - items:
           - item: DIRT
+            amount: 64
+          - item: GRAVEL
+            amount: 64
+        weight: 50
+      - items:
+          - item: ROTTEN_FLESH
+            amount: 10
+          - item: SPIDER_EYE
             amount: 5
-            name: "&8Очень плохая грязь"
+        weight: 40
+      - items:
+          - item: POISONOUS_POTATO
+            amount: 3
+        weight: 30
+
+neutral:
+  neutral_loot_1:
+    slots: 27
+    loot:
+      - items:
+          - item: STONE
+            amount: 32
+          - item: COBBLESTONE
+            amount: 32
+        weight: 50
+      - items:
+          - item: APPLE
+            amount: 5
+          - item: CARROT
+            amount: 5
+        weight: 40
+      - items:
+          - item: STICK
+            amount: 10
+        weight: 30
+  neutral_loot_2:
+    slots: 27
+    loot:
+      - items:
+          - item: IRON_INGOT
+            amount: 1
+          - item: COAL
+            amount: 3
+        weight: 40
+      - items:
+          - item: REDSTONE
+            amount: 5
+          - item: GUNPOWDER
+            amount: 3
+        weight: 30
+      - items:
+          - item: BONE
+            amount: 5
+          - item: STRING
+            amount: 5
+        weight: 30
