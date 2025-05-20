@@ -7,7 +7,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 import net.ayronix.luckyblocks.LuckyBlockPlugin;
-import net.ayronix.luckyblocks.EventChainUtil;
 
 public class HealEvent implements ICustomEvent
 {

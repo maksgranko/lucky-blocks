@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -54,32 +55,65 @@ public class EventAnimationUtil
             }
         }
 
-        // Если animation не задана ИЛИ delay <= 0 — сразу выполнять событие
-        if ((animation == null && delaySec <= 0) || (delaySec <= 0))
+        // Если animation не задана — сразу выполнять событие
+        if (animation == null)
         {
             mainAction.run();
             return;
         }
 
-        // Если есть animation, выполняем ее через /function
-        // LuckyBlocks:animations/<animation>
-        if (animation != null)
+        // --- Новый блок: реализация armor_stand-анимации ---
+        // 1. Сгенерировать уникальное имя для armor_stand
+        String armorStandName = "anim_" + java.util.UUID.randomUUID().toString().replace("-", "");
+
+        // 2. Спавнить armor_stand через API с нужными параметрами
+        org.bukkit.entity.ArmorStand stand = null;
+        if (location != null && location.getWorld() != null)
         {
-            String command = "function luckyblocks:animations/" + animation;
-            // Выполняем через консоль
-            Bukkit.getScheduler().runTask(plugin, () ->
+            // Спавним armor_stand строго в центре блока (X.5, Y, Z.5)
+            Location spawnLocation = new Location(location.getWorld(), location.getBlockX() + 0.5, location.getBlockY(),
+                    location.getBlockZ() + 0.5);
+            stand = spawnLocation.getWorld().spawn(spawnLocation, org.bukkit.entity.ArmorStand.class, as ->
             {
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+                as.setInvisible(true);
+                as.setInvulnerable(true);
+                as.setGravity(false);
+                as.setSilent(true);
+                as.setVisualFire(false);
+                as.setGlowing(false);
+                as.setArms(true);
+                as.setSmall(true);
+                as.setCustomName(armorStandName);
+                as.setCustomNameVisible(false);
+                as.setMarker(false);
+                as.setDisabledSlots(EquipmentSlot.HAND, EquipmentSlot.OFF_HAND, EquipmentSlot.HEAD, EquipmentSlot.CHEST,
+                        EquipmentSlot.LEGS, EquipmentSlot.FEET);
             });
         }
 
-        // Выполняем основное действие с задержкой delay сек, если delay > 0
-        long delayTicks = (long) Math.ceil(delaySec * 20.0);
+        // 3. Запустить функцию datapack с привязкой к armor_stand'у по имени
+        // (через @n)
+        String functionCmd = "execute as @n[type=minecraft:armor_stand,name=" + armorStandName
+                + "] at @s run function luckyblocks:animations/" + animation;
+        Bukkit.getScheduler().runTask(plugin, () ->
+        {
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), functionCmd);
+        });
+
+        // 4. Длительность анимации = delaySec (если не задано — дефолт 2.0 сек)
+        long delayTicks = (long) Math.ceil((delaySec > 0.0 ? delaySec : 2.0) * 20.0);
+
+        // 5. После задержки: удалить armor_stand и выполнить основное действие
+        org.bukkit.entity.ArmorStand armorStandForRemove = stand;
         new BukkitRunnable()
         {
             @Override
             public void run()
             {
+                if (armorStandForRemove != null && !armorStandForRemove.isDead())
+                {
+                    armorStandForRemove.remove();
+                }
                 mainAction.run();
             }
         }.runTaskLater(plugin, delayTicks);
