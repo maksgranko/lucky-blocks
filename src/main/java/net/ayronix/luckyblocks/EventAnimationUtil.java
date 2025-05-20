@@ -65,7 +65,7 @@ public class EventAnimationUtil
         // LuckyBlocks:animations/<animation>
         if (animation != null)
         {
-            String command = "function LuckyBlocks:animations/" + animation;
+            String command = "function luckyblocks:animations/" + animation;
             // Выполняем через консоль
             Bukkit.getScheduler().runTask(plugin, () ->
             {

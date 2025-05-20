@@ -370,7 +370,7 @@ types:
             weight: 60
             power: 2.0
             delay: 2
-            # animation: particles
+            animation: particle
           DROP_ITEM:
             - enabled: true
               weight: 155
@@ -571,6 +571,7 @@ types:
             enabled: true
             weight: 110
             amount: 4
+            heal_percent: 20
           GIVE_EFFECT:
             enabled: true
             weight: 110
