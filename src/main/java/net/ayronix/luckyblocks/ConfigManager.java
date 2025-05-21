@@ -250,7 +250,7 @@ public class ConfigManager
 
     public int getLuckyBlockCustomModelData(String type)
     {
-        return config.getInt("types." + type + ".item.custom-model-data", 0);
+        return config.getInt("types." + type + ".item.inventory-custom-model-data", 0);
     }
 
     /**
