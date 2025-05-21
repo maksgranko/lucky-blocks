@@ -232,7 +232,8 @@ public class LuckyBlockCommand implements CommandExecutor
                     return true;
                 }
 
-                Material material = configManager.getLuckyBlockMaterial(type);
+                Material invBlock = configManager.getInventoryBlock(type);
+                Material material = invBlock != null ? invBlock : configManager.getLuckyBlockMaterial(type);
                 int customModelData = configManager.getLuckyBlockCustomModelData(type);
                 String displayName = configManager.getDisplayName(type, level);
 

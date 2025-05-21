@@ -85,6 +85,24 @@ public class ConfigManager
         return config.getInt("types." + type + ".item.custom-model-data", 0);
     }
 
+    /**
+     * inventory-block из config. Возвращает Material или null, если не задан.
+     */
+    public Material getInventoryBlock(String type)
+    {
+        String block = config.getString("types." + type + ".item.inventory-block", null);
+        if (block == null)
+            return null;
+        try
+        {
+            return Material.valueOf(block.toUpperCase());
+        } catch (IllegalArgumentException e)
+        {
+            plugin.getLogger().warning("inventory-block '" + block + "' не распознан как материал.");
+            return null;
+        }
+    }
+
     public String getLuckyBlockHead(String type)
     {
         return config.getString("types." + type + ".item.inventory-head", null);
