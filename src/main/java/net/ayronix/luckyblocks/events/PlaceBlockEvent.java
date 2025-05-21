@@ -45,9 +45,6 @@ public class PlaceBlockEvent implements ICustomEvent
     {
         Object matObj = map.get("material");
         String materialName = matObj != null ? String.valueOf(matObj) : "STONE";
-        int cModelData = map.containsKey("custom-model-data")
-                ? Integer.parseInt(String.valueOf(map.get("custom-model-data")))
-                : -1;
         Object relObj = map.get("relative-coords");
         int dx = 0, dy = 0, dz = 0;
         if (relObj instanceof Map<?, ?> relMap)

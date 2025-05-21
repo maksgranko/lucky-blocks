@@ -52,10 +52,12 @@ public class BlockPlaceListener implements Listener
         }
         int level = levelObj;
 
-        // Всегда ставим в мир material из конфига
+        // Через 1 тик заменяем установленный блок на материал из конфига
         var material = plugin.getConfigManager().getLuckyBlockMaterial(type);
-        event.setCancelled(true);
-        block.setType(material);
+        org.bukkit.Bukkit.getScheduler().runTask(plugin, () ->
+        {
+            block.setType(material);
+        });
 
         // Генерация имени armor_stand (12 символов, только буквы и цифры)
         String armorStandName = java.util.UUID.randomUUID().toString().replace("-", "").substring(0, 12);

@@ -7,16 +7,184 @@ import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
 public class ConfigManager
 {
 
     private final FileConfiguration config;
     private final LuckyBlockPlugin plugin;
+    private final Map<String, Object> varsMap;
 
     public ConfigManager(LuckyBlockPlugin plugin)
     {
         this.plugin = plugin;
         this.config = plugin.getConfigFile();
+        ConfigurationSection varsSection = config.getConfigurationSection("vars");
+        if (varsSection != null)
+        {
+            varsMap = new HashMap<>();
+            for (String key : varsSection.getKeys(false))
+            {
+                varsMap.put(key, varsSection.get(key));
+            }
+        } else
+        {
+            varsMap = java.util.Collections.emptyMap();
+        }
+        // После загрузки vars прогоняем всю конфигурацию кроме vars через
+        // resolveVarsRecursive
+        ConfigurationSection root = config;
+        for (String key : root.getKeys(false))
+        {
+            if (!key.equals("vars"))
+            {
+                processSectionRecursive(root, key);
+            }
+        }
+    }
+
+    // Рекурсивно обновляет значения секции или ключа с учетом подстановки
+    // переменных
+    private void processSectionRecursive(ConfigurationSection section, String key)
+    {
+        Object raw = section.get(key);
+        if (raw instanceof ConfigurationSection cs)
+        {
+            for (String sub : cs.getKeys(false))
+            {
+                processSectionRecursive(cs, sub);
+            }
+        } else
+        {
+            Object replaced = resolveVarsRecursive(raw);
+            section.set(key, replaced);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object resolveVarsRecursive(Object value)
+    {
+        if (value == null)
+            return null;
+        // Полностью переменная
+        if (value instanceof String s)
+        {
+            Pattern pattern = Pattern.compile("^\\$(\\w+)\\$$");
+            Matcher matcher = pattern.matcher(s);
+            if (matcher.matches())
+            {
+                String var = matcher.group(1);
+                Object v = varsMap.get(var);
+                // рекурсивно разворачиваем до "настоящего" значения
+                return resolveVarsRecursive(v);
+            }
+            // Вхождения переменных внутри строки
+            Pattern anyPattern = Pattern.compile("\\$(\\w+)\\$");
+            Matcher anyMatcher = anyPattern.matcher(s);
+            StringBuilder sb = new StringBuilder();
+            int last = 0;
+            while (anyMatcher.find())
+            {
+                String var = anyMatcher.group(1);
+                Object v = varsMap.get(var);
+                String str = v == null ? anyMatcher.group(0) : String.valueOf(resolveVarsRecursive(v));
+                sb.append(s, last, anyMatcher.start());
+                sb.append(str);
+                last = anyMatcher.end();
+            }
+            sb.append(s.substring(last));
+            return sb.toString();
+        } else if (value instanceof List<?> list)
+        {
+            List<Object> out = new ArrayList<>(list.size());
+            for (Object elem : list)
+                out.add(resolveVarsRecursive(elem));
+            return out;
+        } else if (value instanceof Map<?, ?> map)
+        {
+            Map<Object, Object> out = new HashMap<>();
+            for (Map.Entry<?, ?> entry : map.entrySet())
+                out.put(entry.getKey(), resolveVarsRecursive(entry.getValue()));
+            return out;
+        }
+        return value;
+    }
+
+    // Универсальные методы получения значений с обработкой переменных
+    public String getStringRV(String path, String def)
+    {
+        Object raw = config.get(path, def);
+        Object res = resolveVarsRecursive(raw);
+        return res == null ? def : res.toString();
+    }
+
+    public int getIntRV(String path, int def)
+    {
+        Object raw = config.get(path, def);
+        Object res = resolveVarsRecursive(raw);
+        if (res instanceof Number n)
+            return n.intValue();
+        if (res instanceof String s)
+        {
+            try
+            {
+                return Integer.parseInt(s);
+            } catch (Exception ignore)
+            {
+            }
+        }
+        return def;
+    }
+
+    public double getDoubleRV(String path, double def)
+    {
+        Object raw = config.get(path, def);
+        Object res = resolveVarsRecursive(raw);
+        if (res instanceof Number n)
+            return n.doubleValue();
+        if (res instanceof String s)
+        {
+            try
+            {
+                return Double.parseDouble(s);
+            } catch (Exception ignore)
+            {
+            }
+        }
+        return def;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Object> getListRV(String path)
+    {
+        Object raw = config.get(path);
+        Object res = resolveVarsRecursive(raw);
+        if (res instanceof List<?> l)
+            return new ArrayList<>(l);
+        else if (res != null)
+            return List.of(res);
+        return List.of();
+    }
+
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> getMapRV(String path)
+    {
+        Object raw = config.get(path);
+        Object res = resolveVarsRecursive(raw);
+        if (res instanceof Map<?, ?> m)
+        {
+            Map<String, Object> out = new HashMap<>();
+            for (Map.Entry<?, ?> e : m.entrySet())
+                out.put(String.valueOf(e.getKey()), e.getValue());
+            return out;
+        }
+        return Map.of();
     }
 
     public Set<String> getAvailableTypes()
