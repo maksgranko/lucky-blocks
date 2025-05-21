@@ -69,24 +69,30 @@ public class EventAnimationUtil
         org.bukkit.entity.ArmorStand stand = null;
         if (location != null && location.getWorld() != null)
         {
-            var loc = location.toCenterLocation();
             var world = location.getWorld();
-            String found = null;
-            for (var ent : world.getNearbyEntities(loc, 2, 2, 2))
+            org.bukkit.entity.ArmorStand foundStand = null;
+            int bx = location.getBlockX();
+            int by = location.getBlockY();
+            int bz = location.getBlockZ();
+            // ищем armorstand строго по координате и PDC
+            for (var as : world.getEntitiesByClass(org.bukkit.entity.ArmorStand.class))
             {
-                if (!(ent instanceof org.bukkit.entity.ArmorStand))
-                    continue;
-                var as = (org.bukkit.entity.ArmorStand) ent;
-                String name = as.getCustomName();
-                if (name != null && name.length() == 12 && name.chars().allMatch(Character::isLetterOrDigit))
+                var pdc = as.getPersistentDataContainer();
+                Byte tag = pdc.get(net.ayronix.luckyblocks.LuckyBlockPlugin.LUCKY_BLOCK_KEY,
+                        org.bukkit.persistence.PersistentDataType.BYTE);
+                if (tag != null && tag == (byte) 1)
                 {
-                    found = name;
-                    break;
+                    var pos = as.getLocation();
+                    if (pos.getBlockX() == bx && pos.getBlockY() == by && pos.getBlockZ() == bz)
+                    {
+                        foundStand = as;
+                        break;
+                    }
                 }
             }
-            if (found != null)
+            if (foundStand != null)
             {
-                standName = found;
+                standName = foundStand.getCustomName();
             } else
             {
                 standName = "anim_" + java.util.UUID.randomUUID().toString().replace("-", "");
@@ -94,19 +100,7 @@ public class EventAnimationUtil
                         location.getBlockY(), location.getBlockZ() + 0.5);
                 stand = spawnLocation.getWorld().spawn(spawnLocation, org.bukkit.entity.ArmorStand.class, as ->
                 {
-                    as.setInvisible(true);
-                    as.setInvulnerable(true);
-                    as.setGravity(false);
-                    as.setSilent(true);
-                    as.setVisualFire(false);
-                    as.setGlowing(false);
-                    as.setArms(true);
-                    as.setSmall(true);
-                    as.setCustomName(standName);
-                    as.setCustomNameVisible(false);
-                    as.setMarker(false);
-                    as.setDisabledSlots(EquipmentSlot.HAND, EquipmentSlot.OFF_HAND, EquipmentSlot.HEAD,
-                            EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET);
+                    setupArmorStand(as, standName, true);
                 });
             }
         } else
@@ -153,5 +147,28 @@ public class EventAnimationUtil
                 mainAction.run();
             }
         }.runTaskLater(plugin, delayTicks);
+    }
+
+    /**
+     * Единая настройка параметров armorstand для лаки-блока. Все параметры
+     * фиксированные кроме 'small'. Разворот головы всегда (0,0,0).
+     */
+    public static void setupArmorStand(org.bukkit.entity.ArmorStand as, String standName, boolean small)
+    {
+        as.setInvisible(true);
+        as.setInvulnerable(true);
+        as.setGravity(false);
+        as.setSilent(true);
+        as.setVisualFire(false);
+        as.setGlowing(false);
+        as.setArms(false);
+        as.setSmall(small);
+        as.setCustomName(standName);
+        as.setCustomNameVisible(false);
+        as.setMarker(true);
+        as.setDisabledSlots(org.bukkit.inventory.EquipmentSlot.HAND, org.bukkit.inventory.EquipmentSlot.OFF_HAND,
+                org.bukkit.inventory.EquipmentSlot.HEAD, org.bukkit.inventory.EquipmentSlot.CHEST,
+                org.bukkit.inventory.EquipmentSlot.LEGS, org.bukkit.inventory.EquipmentSlot.FEET);
+        as.setHeadPose(new org.bukkit.util.EulerAngle(0.0, 0.0, 0.0));
     }
 }

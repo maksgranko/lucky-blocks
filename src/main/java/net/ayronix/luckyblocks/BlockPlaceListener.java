@@ -70,39 +70,13 @@ public class BlockPlaceListener implements Listener
         // Спавн armor_stand с оффсетом
         var world = block.getWorld();
         var loc = block.getLocation().add(offsetX, offsetY, offsetZ);
-        var armor = world.spawn(loc, org.bukkit.entity.ArmorStand.class, as ->
+        world.spawn(loc, org.bukkit.entity.ArmorStand.class, as ->
         {
-            as.setCustomName(armorStandName);
-            as.setCustomNameVisible(false);
-            as.setInvisible(true);
-            as.setMarker(true);
-            as.setSmall(false);
-            as.setBasePlate(false);
-            as.setGravity(false);
-            as.setArms(false);
-            // Если задана голова — ставим игрока по нику или BASE64
+            net.ayronix.luckyblocks.EventAnimationUtil.setupArmorStand(as, armorStandName, false);
+            // Если задана голова — ставим кастомную (base64 или ник)
             if (head != null && !head.isEmpty())
             {
-                org.bukkit.inventory.ItemStack skull = new org.bukkit.inventory.ItemStack(
-                        org.bukkit.Material.PLAYER_HEAD, 1);
-                org.bukkit.inventory.meta.SkullMeta meta = (org.bukkit.inventory.meta.SkullMeta) skull.getItemMeta();
-                if (head.length() <= 16 && head.chars().allMatch(Character::isLetterOrDigit))
-                {
-                    meta.setOwnerProfile(org.bukkit.Bukkit.createProfile(head));
-                } else if (head.startsWith("http://") || head.startsWith("https://"))
-                {
-                    // Только если это ссылка на skin/textures (Paper 1.21)
-                    try
-                    {
-                        var profile = org.bukkit.Bukkit.createProfile(java.util.UUID.randomUUID());
-                        java.net.URL skinUrl = new java.net.URL(head);
-                        profile.getTextures().setSkin(skinUrl);
-                        meta.setOwnerProfile(profile);
-                    } catch (Exception ignored)
-                    {
-                    }
-                }
-                skull.setItemMeta(meta);
+                org.bukkit.inventory.ItemStack skull = net.ayronix.luckyblocks.SkullUtil.createHead(head, null, 0);
                 as.getEquipment().setHelmet(skull);
             }
         });
