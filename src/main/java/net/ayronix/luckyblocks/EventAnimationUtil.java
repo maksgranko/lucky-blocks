@@ -123,19 +123,32 @@ public class EventAnimationUtil
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), functionCmd);
         });
 
-        // 4. Длительность анимации = delaySec (если не задано — дефолт 2.0 сек)
         long delayTicks = (long) Math.ceil((delaySec > 0.0 ? delaySec : 2.0) * 20.0);
 
-        // 5. После задержки: удалить armor_stand и выполнить основное действие
-        org.bukkit.entity.ArmorStand armorStandForRemove = stand;
+        // 5. После задержки удалить armor_stand по заранее известному имени
+        // standName
         new BukkitRunnable()
         {
             @Override
             public void run()
             {
-                if (armorStandForRemove != null && !armorStandForRemove.isDead())
+                if (location != null && location.getWorld() != null && standName != null)
                 {
-                    armorStandForRemove.remove();
+                    var world = location.getWorld();
+                    boolean removed = false;
+                    for (var ent : world.getEntitiesByClass(org.bukkit.entity.ArmorStand.class))
+                    {
+                        if (ent.getCustomName() != null && ent.getCustomName().equals(standName))
+                        {
+                            ent.remove();
+                            removed = true;
+                        }
+                    }
+                    if (plugin.getLogger() != null && !removed)
+                    {
+                        plugin.getLogger()
+                                .info("[LuckyBlocks] ArmorStand for animation not removed: name=" + standName);
+                    }
                 }
                 mainAction.run();
             }

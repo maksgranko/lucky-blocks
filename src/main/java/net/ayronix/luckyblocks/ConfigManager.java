@@ -85,6 +85,11 @@ public class ConfigManager
         return config.getInt("types." + type + ".item.custom-model-data", 0);
     }
 
+    public String getLuckyBlockHead(String type)
+    {
+        return config.getString("types." + type + ".item.inventory-head", null);
+    }
+
     public String getDisplayName(String type, int level)
     {
         return config.getString("types." + type + ".levels." + level + ".display-name", type + " Level " + level);

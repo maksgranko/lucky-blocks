@@ -236,21 +236,38 @@ public class LuckyBlockCommand implements CommandExecutor
                 int customModelData = configManager.getLuckyBlockCustomModelData(type);
                 String displayName = configManager.getDisplayName(type, level);
 
-                ItemStack luckyBlockItem = new ItemStack(material, 1);
-                ItemMeta meta = luckyBlockItem.getItemMeta();
-
-                if (meta != null)
+                ItemStack luckyBlockItem;
+                if (material == Material.PLAYER_HEAD)
                 {
-                    meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', displayName));
-                    if (customModelData > 0)
+                    String head = configManager.getLuckyBlockHead(type);
+                    luckyBlockItem = SkullUtil.createHead(head,
+                            ChatColor.translateAlternateColorCodes('&', displayName), customModelData);
+                    ItemMeta meta = luckyBlockItem.getItemMeta();
+                    if (meta != null)
                     {
-                        meta.setCustomModelData(customModelData);
+                        PersistentDataContainer pdc = meta.getPersistentDataContainer();
+                        pdc.set(LuckyBlockPlugin.LUCKY_BLOCK_KEY, PersistentDataType.BYTE, (byte) 1);
+                        pdc.set(LuckyBlockPlugin.LUCKY_BLOCK_TYPE_KEY, PersistentDataType.STRING, type);
+                        pdc.set(LuckyBlockPlugin.LUCKY_BLOCK_LEVEL_KEY, PersistentDataType.INTEGER, level);
+                        luckyBlockItem.setItemMeta(meta);
                     }
-                    PersistentDataContainer pdc = meta.getPersistentDataContainer();
-                    pdc.set(LuckyBlockPlugin.LUCKY_BLOCK_KEY, PersistentDataType.BYTE, (byte) 1);
-                    pdc.set(LuckyBlockPlugin.LUCKY_BLOCK_TYPE_KEY, PersistentDataType.STRING, type);
-                    pdc.set(LuckyBlockPlugin.LUCKY_BLOCK_LEVEL_KEY, PersistentDataType.INTEGER, level);
-                    luckyBlockItem.setItemMeta(meta);
+                } else
+                {
+                    luckyBlockItem = new ItemStack(material, 1);
+                    ItemMeta meta = luckyBlockItem.getItemMeta();
+                    if (meta != null)
+                    {
+                        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', displayName));
+                        if (customModelData > 0)
+                        {
+                            meta.setCustomModelData(customModelData);
+                        }
+                        PersistentDataContainer pdc = meta.getPersistentDataContainer();
+                        pdc.set(LuckyBlockPlugin.LUCKY_BLOCK_KEY, PersistentDataType.BYTE, (byte) 1);
+                        pdc.set(LuckyBlockPlugin.LUCKY_BLOCK_TYPE_KEY, PersistentDataType.STRING, type);
+                        pdc.set(LuckyBlockPlugin.LUCKY_BLOCK_LEVEL_KEY, PersistentDataType.INTEGER, level);
+                        luckyBlockItem.setItemMeta(meta);
+                    }
                 }
 
                 for (Player target : targetPlayers)

@@ -1,11 +1,13 @@
 types:
   positive:
     item:
-      material: SPONGE
+      inventory-block: PLAYER_HEAD                  # Ник игрока на голове (или ссылка, или base64)
+      inventory-head: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGI1M2M5N2U0NzEwMGU4M2U5ZDQ2NGIzNGI2M2IyNDdiZTQzMmUxZGI5YmU3MDFhNTJiNjA0MjY5NDJjOGUyZiJ9fX0
+      material: GLASS
       custom-model-data: 1001
       # Пример: настройка манекена для анимаций
-      armorstand-head: Notch                  # Ник игрока на голове (или ссылка, или base64)
-      armorstand-offset: [0.0, -0.5, 0.0]      # Смещение манекена вверх на 1 блок
+      armorstand-head: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGI1M2M5N2U0NzEwMGU4M2U5ZDQ2NGIzNGI2M2IyNDdiZTQzMmUxZGI5YmU3MDFhNTJiNjA0MjY5NDJjOGUyZiJ9fX0=                  # Ник игрока на голове (или ссылка, или base64)
+      armorstand-offset: [0.5, -1.25, 0.5]      # Смещение манекена вверх на 1 блок
     levels:
       1:
         display-name: "&aПозитивный ЛакиБлок &eI уровня"
@@ -363,11 +365,11 @@ types:
 
   negative:
     item:
-      material: SPONGE
+      material: GLASS
       custom-model-data: 1002
       # Пример: настройка манекена для анимаций
-      armorstand-head: Notch                  # Ник игрока на голове (или ссылка, или base64)
-      armorstand-offset: [0.0, -0.5, 0.0]      # Смещение манекена вверх на 1 блок
+      armorstand-head: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGI1M2M5N2U0NzEwMGU4M2U5ZDQ2NGIzNGI2M2IyNDdiZTQzMmUxZGI5YmU3MDFhNTJiNjA0MjY5NDJjOGUyZiJ9fX0=                  # Ник игрока на голове (или ссылка, или base64)
+      armorstand-offset: [0.5, -1.25, 0.5]      # Смещение манекена вверх на 1 блок
     levels:
       1:
         display-name: "&cНегативный ЛакиБлок &eI уровня"
