@@ -63,37 +63,60 @@ public class EventAnimationUtil
         }
 
         // --- Новый блок: реализация armor_stand-анимации ---
-        // 1. Сгенерировать уникальное имя для armor_stand
-        String armorStandName = "anim_" + java.util.UUID.randomUUID().toString().replace("-", "");
-
-        // 2. Спавнить armor_stand через API с нужными параметрами
+        // 1. Используем armor_stand, который уже стоит у лаки-блока
+        // Ищем armor_stand один раз, имя сохраняем, далее не меняем
+        final String standName;
         org.bukkit.entity.ArmorStand stand = null;
         if (location != null && location.getWorld() != null)
         {
-            // Спавним armor_stand строго в центре блока (X.5, Y, Z.5)
-            Location spawnLocation = new Location(location.getWorld(), location.getBlockX() + 0.5, location.getBlockY(),
-                    location.getBlockZ() + 0.5);
-            stand = spawnLocation.getWorld().spawn(spawnLocation, org.bukkit.entity.ArmorStand.class, as ->
+            var loc = location.toCenterLocation();
+            var world = location.getWorld();
+            String found = null;
+            for (var ent : world.getNearbyEntities(loc, 2, 2, 2))
             {
-                as.setInvisible(true);
-                as.setInvulnerable(true);
-                as.setGravity(false);
-                as.setSilent(true);
-                as.setVisualFire(false);
-                as.setGlowing(false);
-                as.setArms(true);
-                as.setSmall(true);
-                as.setCustomName(armorStandName);
-                as.setCustomNameVisible(false);
-                as.setMarker(false);
-                as.setDisabledSlots(EquipmentSlot.HAND, EquipmentSlot.OFF_HAND, EquipmentSlot.HEAD, EquipmentSlot.CHEST,
-                        EquipmentSlot.LEGS, EquipmentSlot.FEET);
-            });
+                if (!(ent instanceof org.bukkit.entity.ArmorStand))
+                    continue;
+                var as = (org.bukkit.entity.ArmorStand) ent;
+                String name = as.getCustomName();
+                if (name != null && name.length() == 12 && name.chars().allMatch(Character::isLetterOrDigit))
+                {
+                    found = name;
+                    break;
+                }
+            }
+            if (found != null)
+            {
+                standName = found;
+            } else
+            {
+                standName = "anim_" + java.util.UUID.randomUUID().toString().replace("-", "");
+                Location spawnLocation = new Location(location.getWorld(), location.getBlockX() + 0.5,
+                        location.getBlockY(), location.getBlockZ() + 0.5);
+                stand = spawnLocation.getWorld().spawn(spawnLocation, org.bukkit.entity.ArmorStand.class, as ->
+                {
+                    as.setInvisible(true);
+                    as.setInvulnerable(true);
+                    as.setGravity(false);
+                    as.setSilent(true);
+                    as.setVisualFire(false);
+                    as.setGlowing(false);
+                    as.setArms(true);
+                    as.setSmall(true);
+                    as.setCustomName(standName);
+                    as.setCustomNameVisible(false);
+                    as.setMarker(false);
+                    as.setDisabledSlots(EquipmentSlot.HAND, EquipmentSlot.OFF_HAND, EquipmentSlot.HEAD,
+                            EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET);
+                });
+            }
+        } else
+        {
+            standName = "anim_" + java.util.UUID.randomUUID().toString().replace("-", "");
         }
 
         // 3. Запустить функцию datapack с привязкой к armor_stand'у по имени
         // (через @n)
-        String functionCmd = "execute as @n[type=minecraft:armor_stand,name=" + armorStandName
+        String functionCmd = "execute as @n[type=minecraft:armor_stand,name=" + standName
                 + "] at @s run function luckyblocks:animations/" + animation;
         Bukkit.getScheduler().runTask(plugin, () ->
         {

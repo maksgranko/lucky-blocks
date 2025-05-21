@@ -3,6 +3,9 @@ types:
     item:
       material: SPONGE
       custom-model-data: 1001
+      # Пример: настройка манекена для анимаций
+      armorstand-head: Notch                  # Ник игрока на голове (или ссылка, или base64)
+      armorstand-offset: [0.0, -0.5, 0.0]      # Смещение манекена вверх на 1 блок
     levels:
       1:
         display-name: "&aПозитивный ЛакиБлок &eI уровня"
@@ -12,6 +15,7 @@ types:
             weight: 3
             power: 2.0
             delay: 2
+            animation: particle
           DROP_ITEM:
             - enabled: true
               weight: 90
@@ -361,6 +365,9 @@ types:
     item:
       material: SPONGE
       custom-model-data: 1002
+      # Пример: настройка манекена для анимаций
+      armorstand-head: Notch                  # Ник игрока на голове (или ссылка, или base64)
+      armorstand-offset: [0.0, -0.5, 0.0]      # Смещение манекена вверх на 1 блок
     levels:
       1:
         display-name: "&cНегативный ЛакиБлок &eI уровня"
@@ -684,4 +691,5 @@ types:
             weight: 7
             entity: "cow"
             count: 3
+
 
