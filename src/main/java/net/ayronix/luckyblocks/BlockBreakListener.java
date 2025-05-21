@@ -60,6 +60,23 @@ public class BlockBreakListener implements Listener
         {
             return;
         }
+        // --- Удаление armor_stand при ломке лакиблока ---
+        try
+        {
+            String[] parts = coord.split(",");
+            if (parts.length >= 6)
+            {
+                String armorStandName = parts[5];
+                var loc = block.getLocation().toCenterLocation();
+                var world = block.getWorld();
+                var stands = world.getNearbyEntities(loc, 2, 2, 2, ent -> ent instanceof org.bukkit.entity.ArmorStand
+                        && armorStandName.equals(ent.getCustomName()));
+                for (var ent : stands)
+                    ent.remove();
+            }
+        } catch (Exception ignore)
+        {
+        }
 
         event.setDropItems(false);
         event.setExpToDrop(0);

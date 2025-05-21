@@ -369,7 +369,7 @@ types:
             enabled: true
             weight: 60
             power: 2.0
-            delay: 2
+            delay: 3.0
             animation: particle
           DROP_ITEM:
             - enabled: true
